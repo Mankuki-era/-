@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Vue -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+
+  <!-- Vue Router -->
+  <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+
+  <!-- Vue Loader -->
+  <script src="https://unpkg.com/http-vue-loader"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.css">
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/home.css">
+  <link rel="stylesheet" href="css/page1.css">
+  <link rel="stylesheet" href="css/page2.css">
+  <link rel="stylesheet" href="css/page3.css">
+  <link rel="stylesheet" href="css/main.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.1/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <script src="https://kit.fontawesome.com/bf785f5925.js" crossorigin="anonymous"></script>
+  <script
+  src="https://code.jquery.com/jquery-3.6.0.min.js"
+  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+  crossorigin="anonymous"></script>
+
+  <title>出席管理システム</title>
+</head>
+<body>
+  <div id="app">
+    <div>
+      <header-component ref="headerChild"></header-component>
+      <loading-bar-component ref="loadBarChild"></loading-bar-component>
+    </div>
+    <div class="center-area">
+      <nav-component @load-bar-event="loadBarEvent"></nav-component>
+      <router-view @grade-show="gradeShow"></router-view>
+    </div>
+  </div>
+  <script src="./router/index.js"></script>
+</body>
+</html>

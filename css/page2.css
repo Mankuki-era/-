@@ -1,0 +1,410 @@
+
+.modal-contents-schedule-create .menu {
+  max-width: 600px;
+}
+.modal-contents-schedule-create .menu label.main-label {
+  position: relative;
+  display: block;
+  margin: 0;
+  padding : 12px;
+  line-height: 1;
+  border-bottom: 1px solid #ccc;
+  font-size: 13px;
+}
+.modal-contents-schedule-create .menu label.main-label::before {
+  position: absolute;
+	top: 16px;
+	right: 12px;
+	width: 0;
+	height: 0;
+	padding: 0;
+	content: '';
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 6px solid #666;
+	pointer-events: none;
+}
+.modal-contents-schedule-create .menu label.main-label span.step-number {
+  background-color: #333;
+  padding: 0 4px;
+  color: #fff;
+  margin-right: 15px;
+}
+.modal-contents-schedule-create .menu label.main-label span.success, .modal-contents-schedule-create .menu label.main-label span.error {
+  position: absolute;
+  top: 13px;
+  right: 40px;
+  font-weight: bold;
+  font-size: 13px;
+}
+.modal-contents-schedule-create .menu label.main-label span.success {
+  color: #28a745;
+}
+.modal-contents-schedule-create .menu label.main-label span.error {
+  color: #dc3545;
+}
+.modal-contents-schedule-create .menu input[type="checkbox"] {
+  display: none;
+}
+/* .modal-contents-schedule-create .menu > div { */
+.modal-contents-schedule-create .menu div.first-contena, .modal-contents-schedule-create .menu div.second-contena, .modal-contents-schedule-create .menu div.third-contena {
+  height: 0;
+  overflow: hidden;
+  -webkit-transition: all 0.5s;
+  -moz-transition: all 0.5s;
+  -ms-transition: all 0.5s;
+  -o-transition: all 0.5s;
+  transition: all 0.5s;
+}
+#menu_bar01:checked ~ div.first-contena,
+#menu_bar02:checked ~ div.second-contena,
+#menu_bar03:checked ~ div.third-contena {
+  height: 440px;
+  opacity: 1;
+}
+.modal-contents-schedule-create .menu .first-contena,
+.modal-contents-schedule-create .menu .second-contena {
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+}
+.modal-contents-schedule-create .menu .first-contena .msg,
+.modal-contents-schedule-create .menu .second-contena .msg {
+  margin-top: 25px;
+  font-size: 13px;
+  text-align: center;
+  font-weight: bold;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena,
+.modal-contents-schedule-create .menu .second-contena .form-contena {
+  margin-top: 30px;
+  flex: 1;
+  display: flex;
+}
+.modal-contents-schedule-create .menu .first-contena ul,
+.modal-contents-schedule-create .menu .second-contena ul,
+.modal-contents-schedule-create .menu .third-contena ul {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena .left-contena,
+.modal-contents-schedule-create .menu .second-contena .form-contena .left-contena {
+  width: 170px;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena .right-contena,
+.modal-contents-schedule-create .menu .second-contena .form-contena .right-contena {
+  flex: 1;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena .left-contena .form-box p,
+.modal-contents-schedule-create .menu .second-contena .form-contena .left-contena .form-box p {
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena .left-contena .form-box:first-of-type {
+  margin-bottom: 20px;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena .left-contena .form-box .date-edit {
+  margin-left: 10px;
+  position: relative;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena .left-contena .form-box .date-edit::before {
+  position: absolute;
+  content: '';
+  top: 9px;
+  right: 10px;
+  width: 0;
+	height: 0;
+	padding: 0;
+	content: '';
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 6px solid #666;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena .left-contena .form-box .date-edit input[type="date"] {
+  padding: 8px 20px 8px 5px;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  text-align: center;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena .left-contena .form-box .date-edit input[type="date"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  right: 0;
+  margin: auto;
+  padding: 0;
+  background: transparent;
+  color: transparent;
+  cursor: pointer;
+  height: 36px;
+  width: 27px;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena .left-contena .form-box .select-contena,
+.modal-contents-schedule-create .menu .second-contena .form-contena .left-contena .form-box .select-contena {
+	position: relative;
+  width: 55px;
+	border: 1px solid #bbb;
+	border-radius: 3px;
+	background: #fff;
+  margin-left: 10px;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena .left-contena .form-box .select-contena::before,
+.modal-contents-schedule-create .menu .second-contena .form-contena .left-contena .form-box .select-contena::before {
+	position: absolute;
+	top: 14px;
+	right: 10px;
+	width: 0;
+	height: 0;
+	padding: 0;
+	content: '';
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 6px solid #666;
+	pointer-events: none;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena .left-contena .form-box .select-contena select,
+.modal-contents-schedule-create .menu .second-contena .form-contena .left-contena .form-box .select-contena select {
+  cursor: pointer;
+	text-indent: 0.01px;
+	text-overflow: ellipsis;
+  border: none;
+	padding: 8px 35px 8px 10px;
+	color: #666;
+	outline: none;
+	background: transparent;
+	background-image: none;
+	box-shadow: none;
+	-webkit-appearance: none;
+	appearance: none;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena .right-contena > p,
+.modal-contents-schedule-create .menu .second-contena .form-contena .right-contena > p {
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena .right-contena .preview-area,
+.modal-contents-schedule-create .menu .second-contena .form-contena .right-contena .preview-area {
+  height: 280px;
+  overflow-y: scroll;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena .right-contena .preview-area .date-row,
+.modal-contents-schedule-create .menu .second-contena .form-contena .right-contena .preview-area .date-row {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  height: 40px;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena .right-contena .preview-area .date-row {
+  justify-content: space-between;
+}
+.modal-contents-schedule-create .menu .second-contena .form-contena .right-contena .preview-area .date-row {
+  padding-right: 10px;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena .right-contena .preview-area .date-row .count,
+.modal-contents-schedule-create .menu .second-contena .form-contena .right-contena .preview-area .date-row .count {
+  font-size: 12px;
+  text-align: center;
+  width: 50px;
+}
+.modal-contents-schedule-create .menu .second-contena .form-contena .right-contena .preview-area .date-row input[type="text"] {
+  flex: 1;
+  padding: 5px 10px;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena .right-contena .preview-area .date-edit {
+  flex: 1;
+  position: relative;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena .right-contena .preview-area .date-edit:not(.first):before {
+  position: absolute;
+  content: '';
+  top: 15px;
+  left: 95px;
+  width: 0;
+	height: 0;
+	padding: 0;
+	content: '';
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 6px solid #666;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena .right-contena .preview-area .date-edit input[type="date"] {
+  padding: 5px 20px 5px 2px;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  text-align: center;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena .right-contena .preview-area .date-edit:not(.first) input[type="date"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  left: 86px;
+  margin: auto;
+  padding: 0;
+  background: transparent;
+  color: transparent;
+  cursor: pointer;
+  height: 35px;
+  width: 27px;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena .right-contena .preview-area .date-edit.first input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena .right-contena .preview-area .auto-fill {
+  width: 30px;
+}
+.modal-contents-schedule-create .menu .first-contena .form-contena .right-contena .preview-area .auto-fill a {
+  color: #007bff;
+}
+.modal-contents-schedule-create .menu .first-contena ul li:not(:first-of-type),
+.modal-contents-schedule-create .menu .second-contena ul li:not(:first-of-type),
+.modal-contents-schedule-create .menu .third-contena ul li:not(:first-of-type) {
+  margin-left: 10px;
+}
+
+
+
+
+.modal-contents-schedule-create .menu .second-contena .table-contena {
+  overflow-y: scroll;
+  height: 300px;
+  margin: 20px 0;
+}
+.modal-contents-schedule-create .menu .second-contena .table-contena thead th.mode {
+  text-align: center;
+}
+.modal-contents-schedule-create .menu .second-contena .table-contena tbody tr td {
+  vertical-align: middle;
+}
+.modal-contents-schedule-create .menu .second-contena .table-contena tbody tr td.select-contena {
+	position: relative;
+  width: 50px;
+  padding: 3px 20px;
+}
+.modal-contents-schedule-create .menu .second-contena .table-contena tbody tr td.select-contena::before {
+	position: absolute;
+	top: 17px;
+	right: 27px;
+	width: 0;
+	height: 0;
+	padding: 0;
+	content: '';
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 6px solid #666;
+	pointer-events: none;
+}
+.modal-contents-schedule-create .menu .second-contena .table-contena tbody tr td select {
+  cursor: pointer;
+	text-indent: 0.01px;
+	text-overflow: ellipsis;
+  border: none;
+	padding: 8px 25px 8px 8px;
+	color: #666;
+	outline: none;
+	background: transparent;
+	background-image: none;
+	box-shadow: none;
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+
+
+
+
+
+.modal-contents-schedule-create .menu .third-contena .table-contena{
+  overflow-y: scroll;
+  height: 350px;
+  margin: 20px 0;
+}
+.modal-contents-schedule-create .menu .third-contena .table-contena table {
+  position: relative;
+}
+.modal-contents-schedule-create .menu .third-contena .table-contena table thead th {
+  top: 0;
+  position: sticky;
+  background-color: #fafafa;
+}
+.modal-contents-schedule-create .menu .third-contena .table-contena table th {
+  padding: 0;
+  white-space: nowrap;
+}
+.modal-contents-schedule-create .menu .third-contena .table-contena table th, .modal-contents-schedule-create .menu .third-contena .table-contena table td {
+  border: 1px solid #888;
+}
+.modal-contents-schedule-create .menu .third-contena .table-contena table thead tr .thema-name {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  vertical-align: middle;
+  padding: 10px 0;
+}
+.modal-contents-schedule-create .menu .third-contena .table-contena table tbody tr {
+  height: 35px;
+}
+.modal-contents-schedule-create .menu .third-contena .table-contena table tbody tr th {
+  text-align: center;
+  line-height: 35px;
+  width: 100px;
+}
+.modal-contents-schedule-create .menu .third-contena .table-contena table tbody tr td {
+  padding: 0;
+  vertical-align: middle;
+}
+.modal-contents-schedule-create .menu .third-contena .table-contena table tbody tr td select {
+  appearance: none;
+  border-radius: 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-align: -webkit-center;
+  width: 100%;
+  height: 35px;
+  border: none;
+  cursor: pointer;
+}
+
+
+
+
+
+
+
+
+.schedule-box {
+  height: 100%;
+  background-color: #eee;
+}
+.schedule-box table {
+  width: auto;
+  margin: 0 auto;
+}
+.schedule-box table th, .schedule-box table td {
+  border: 1px solid #888;
+}
+.schedule-box table thead th.thema-name {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  vertical-align: middle;
+  padding: 10px 15px;
+}
+.schedule-box table tbody, .schedule-box table thead th {
+  background-color: #fff;
+  text-align: center;
+}
+.schedule-box table tbody th {
+  width: 160px;
+  text-align: center;
+  padding: 0;
+  line-height: 40px;
+}
+.schedule-box table tbody tr {
+  height: 40px;
+}
+.schedule-box table tbody tr td {
+  line-height: 40px;
+  text-align: center;
+  padding: 0;
+}

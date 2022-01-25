@@ -1,0 +1,66 @@
+main.root h1 {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  margin: 20px 0 70px;
+}
+.card-contena {
+  margin: 0 auto;
+  display: grid;
+  width: 70%;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+}
+.card-contena .card-box {
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.card-contena .card-box .card-top {
+  height: 120px;
+  box-shadow: 0px 8px 8px -10px rgba(0,0,0,0.5);
+}
+.card-contena .card-box .card-top.color-one {
+  background-color: #fe7936;
+}
+.card-contena .card-box .card-top.color-two {
+  background-color: #198eee;
+}
+.card-contena .card-box .card-top.color-three {
+  background-color: #3347fb;
+}
+.card-contena .card-box .card-top.color-four {
+  background-color: #01a801;
+}
+.card-contena .card-box .card-top.color-five {
+  background-color: #008000;
+}
+.card-contena .card-box .card-top.color-six { 
+  background-color: #c100be;
+}
+.card-contena .card-box .card-top.color-seven {
+  background-color: purple;
+}
+.card-contena .card-box .card-top li {
+  height: 100%;
+}
+.card-contena .card-box .card-top li a {
+  display: block;
+  text-align: center;
+  line-height: 120px;
+  font-size: 25px;
+  color: #fff;
+}
+.card-contena .card-box .card-bottom {
+  height: 70px;
+  position: relative;
+  padding: 10px;
+}
+.card-contena .card-box .card-bottom p {
+  font-size: 11px;
+}
+.card-contena .card-box .card-bottom p.date {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}

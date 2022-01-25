@@ -1,0 +1,204 @@
+
+/* .data-box {
+  height: 100%;
+} */
+
+.form-contena.data {
+	display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.form-contena.data .left-contena .select-contena {
+	position: relative;
+  height: 65%;
+	border: 1px solid #bbb;
+	border-radius: 2px;
+	background: #fff;
+  margin-left: 20px;
+}
+.form-contena.data .left-contena .select-contena::before {
+	position: absolute;
+	top: 17px;
+	right: 10px;
+	width: 0;
+	height: 0;
+	padding: 0;
+	content: '';
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 6px solid #666;
+	pointer-events: none;
+}
+.form-contena.data .left-contena .select-contena select {
+  cursor: pointer;
+	text-indent: 0.01px;
+	text-overflow: ellipsis;
+  border: none;
+	padding: 10px 25px 10px 8px;
+	color: #666;
+	outline: none;
+	background: transparent;
+	background-image: none;
+	box-shadow: none;
+	-webkit-appearance: none;
+	appearance: none;
+}
+.form-contena.data .right-contena .mode01 ul li.change-width-small  {
+  width: 70px;
+}
+.form-contena.data .right-contena .mode02 {
+  display: flex;
+}
+.form-contena.data .right-contena .guide-box {
+  display: flex;
+  align-items: center;
+}
+.form-contena.data .right-contena .guide-box:not(:first-of-type) {
+  margin-left: 15px;
+}
+.form-contena.data .right-contena .guide-box div {
+  width: 25px;
+  height: 15px;
+  border: 1px solid #333;
+}
+.form-contena.data .right-contena .guide-box p {
+  font-size: 12px;
+  padding-left: 5px;
+}
+.form-contena.data .right-contena .guide-box .type01 {
+  background-color: yellow;
+}
+.form-contena.data .right-contena .guide-box .type02 {
+  background-color: orange;
+}
+.form-contena.data .right-contena .guide-box .type03 {
+  background-color: #0095ff;
+}
+.form-contena.data .right-contena .guide-box .type04 {
+  background-color: red;
+}
+
+
+
+.data-box table.mode02 th, .data-box table.mode02 td {
+  border: 1px solid #333;
+}
+.data-box table.mode02 thead th.number-column {
+  min-width: 70px;
+}
+.data-box table.mode02 thead th.name-column {
+  min-width: 80px;
+}
+.data-box table.mode02 thead th.date-column {
+  width: 70px;
+  padding: 5px 0;
+  text-align: center;
+  font-size: 13px;
+}
+.data-box table.mode02 tbody tr td {
+  font-size: 10px;
+  text-align: center;
+  padding: 3px 0;
+}
+.data-box table.mode02 tbody tr td.type1 {
+  background-color: #f6ff00;
+}
+.data-box table.mode02 tbody tr td.type2 {
+  background-color: #ff0000;
+}
+.data-box table.mode02 tbody tr td.type3 {
+  background-color: #0077ff;
+}
+.data-box table.mode02 tbody tr td.type4 {
+  background-color: #ff8b07;
+}
+.data-box table.mode02 tbody tr td.type5 {
+  background-color: #ddd;
+}
+
+
+
+
+
+
+.data-box table.mode01 thead th, .data-box table.mode01 tbody td {
+  text-align: center;
+  border: 1px solid #888;
+  padding: 0;
+}
+.data-box table.mode01 thead th {
+  font-size: 12px;
+  height: 30px;
+  line-height: 30px;
+}
+.data-box table.mode01 tbody td {
+  font-size: 12px;
+  height: 35px;
+  line-height: 35px;
+}
+.data-box table.mode01 thead th.date-column {
+  width: 70px;
+}
+.data-box table.mode01 thead th.team-column {
+  width: 40px;
+}
+.data-box table.mode01 thead th.number-column {
+  width: 70px;
+}
+.data-box table.mode01 thead th.name-column {
+  width: 90px;
+}
+.data-box table.mode01 tbody td.input-area input {
+  width: 100%;
+  height: 35px;
+  font-size: 11px;
+  border: none;
+  text-align: center;
+}
+.data-box table.mode01 tbody td.input-area input:focus, .data-box table.mode01 tbody td.select-area select:focus {
+  outline: none;
+}
+.data-box table.mode01 tbody td.select-area {
+  width: 60px;
+}
+.data-box table.mode01 tbody td.select-area select {
+  appearance: none;
+  border-radius: 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-align: -webkit-center;
+  width: 100%;
+  height: 35px;
+  border: none;
+  cursor: pointer;
+}
+.data-box table.mode01 tbody td.date {
+  width: 80px;
+  position: relative;
+}
+.data-box table.mode01 tbody td.date input[type="date"] {
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 35px;
+  padding: 0;
+  border: none;
+}
+.data-box table.mode01 tbody td.date input[type="date"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  right: 0;
+  margin: auto;
+  padding: 0;
+  background: transparent;
+  color: transparent;
+  cursor: pointer;
+  height: 35px;
+  width: 100%;
+}
+.data-box table.mode01 tbody td.check-area {
+  width: 70px;
+  font-size: 18px;
+  cursor: pointer;
+}

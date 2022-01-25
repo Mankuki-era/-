@@ -1,0 +1,271 @@
+
+li.menu-first {
+  position: relative;
+}
+li.menu-first::before {
+  position: absolute;
+	top: 12px;
+	right: 8px;
+	width: 0;
+	height: 0;
+	padding: 0;
+	content: '';
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 6px solid #666;
+	pointer-events: none;
+}
+li.menu-first > a {
+  padding: 0 20px 0 10px;
+}
+li.menu-first ul.menu-second {
+  position: absolute;
+  overflow: hidden;
+  top: 30px;
+  right: 0;
+  width: 170%;
+  z-index: 1;
+  border: 1px solid #a4a4a4;
+  border-radius: 2px;
+  background-color: #fff;
+  display: none;
+  opacity: 0;
+}
+li.menu-first ul.menu-second li:not(.disabled):hover{
+  background-color: #f4f4f4;
+}
+li.menu-first ul.menu-second li.disabled a {
+  color: #c5c5c5;
+  pointer-events: none;
+}
+li.menu-first ul.menu-second li:not(:first-of-type){
+  border-top: 1px solid #ddd;
+}
+
+li.menu-first ul.menu-second.show {
+  display: block;
+  animation: showMenu .2s forwards;
+}
+li.menu-first ul.menu-second.hide {
+  display: block;
+  animation: hideMenu .2s forwards;
+}
+
+@keyframes showMenu{
+  0% {
+    opacity: 0;
+    transform: translateY(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(7px);
+  }
+}
+
+@keyframes hideMenu{
+  0% {
+    opacity: 1;
+    transform: translateY(7px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(0px);
+  }
+}
+
+/* モーダルウィンドウ(追加) */
+.modal-contents-member-create .sample-area p {
+  font-size: 12px;
+  font-weight: bold;
+}
+.modal-contents-member-create .sample-area .sample-download {
+  width: 180px;
+  height: 30px;
+  margin: 10px auto 0px;
+  border: 1px solid gray;
+  border-radius: 2px;
+}
+.modal-contents-member-create .sample-area .sample-download a {
+  display: block;
+  text-align: center;
+  line-height: 29px;
+  font-size: 9px;
+  font-weight: bold;
+  color: #5d646b;
+}
+.modal-contents-member-create .sample-area .sample-download a img {
+  height: 23px;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.modal-contents-member-create .preview-area {
+  margin-top: 10px;
+}
+.modal-contents-member-create .preview-area .msg {
+  margin-bottom: 5px;
+  padding-left: 10px;
+  font-size: 13px;
+  font-weight: bold;
+}
+.modal-contents-member-create .preview-area .err-msg {
+  color: #dc3545;
+}
+.modal-contents-member-create .preview-area .success-msg {
+  color: #28a745;
+}
+.modal-contents-member-create .preview-area .preview-box {
+  height: 250px;
+  overflow-y: scroll;
+  border: 1px solid lightgray;
+}
+.modal-contents-member-create .preview-area .preview-box .no-preview {
+  height: 100%;
+  text-align: center;
+  line-height: 250px;
+  font-size: 14px;
+  color: #c0c0c0;
+}
+.modal-contents-member-create .preview-area .preview-box table {
+  border-collapse:  collapse;
+  margin: 0 auto;
+}
+.modal-contents-member-create .preview-area .preview-box table th, .modal-contents-member-create .preview-area .preview-box table td {
+  font-size: 11px;
+  border: solid 1px #ccc;
+  padding: 3px 15px;
+  text-align: center;
+}
+.modal-contents-member-create .preview-area .preview-box table td.err {
+  background-color: #ff00004e;
+}
+
+.modal-contents-member-create .file-area {
+  margin-top: 10px;
+}
+.modal-contents-member-create .file-area label {
+  padding: 8px 15px;
+  color: #fff;
+  font-size: 10px;
+  background-color: #6c757d;
+  border-radius: 2px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+.modal-contents-member-create .file-area span {
+  font-size: 11px;
+  font-weight: 400;
+  color: #333;
+}
+.modal-contents-member-create .file-area label input[type="file"] {
+  display: none;
+}
+
+.modal-contents-member-create ul {
+  display: flex;
+  justify-content: flex-end;
+}
+.modal-contents-member-create ul li:not(:first-of-type) {
+  margin-left: 10px;
+}
+
+/* メイン */
+main .main-contena .form-contena.user {
+  justify-content: space-between;
+}
+main .main-contena .form-contena.user .right-contena, main .main-contena .form-contena.user .left-contena {
+  display: flex;
+  align-items: center;
+}
+main .main-contena .form-contena.user .left-contena .amount-text {
+  font-size: 12px;
+}
+main .main-contena .form-contena.user .left-contena .amount-text span {
+  color: #007bff;
+}
+main .main-contena .form-contena.user .left-contena .select-contena {
+	position: relative;
+	border: 1px solid #bbb;
+	border-radius: 2px;
+	background: #fff;
+  margin-left: 20px;
+}
+main .main-contena .form-contena.user .left-contena .select-contena::before {
+	position: absolute;
+	top: 14px;
+	right: 10px;
+	width: 0;
+	height: 0;
+	padding: 0;
+	content: '';
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 6px solid #666;
+	pointer-events: none;
+}
+main .main-contena .form-contena.user .left-contena .select-contena select {
+  cursor: pointer;
+	text-indent: 0.01px;
+	text-overflow: ellipsis;
+  border: none;
+	padding: 8px 25px 8px 8px;
+	color: #666;
+	outline: none;
+	background: transparent;
+	background-image: none;
+	box-shadow: none;
+	-webkit-appearance: none;
+	appearance: none;
+}
+main .main-contena .form-contena.user .right-contena .search-text{
+  vertical-align: middle;
+  -webkit-appearance:none;
+  width: 25px;
+  height: 25px;
+  padding: 10px;
+  border: none;
+  background:#fff url("https://coco-factory.jp/ugokuweb/wp-content/themes/ugokuweb/data/7-2-3/img/icon_search.svg") no-repeat 7px center;
+  background-size: 18px 18px;
+  transition: all 0.3s;
+  outline: none;
+  cursor: pointer;
+}
+main .main-contena .form-contena.user .right-contena .search-text:focus {
+  width: 180px;
+  padding: 0 0 0 40px;
+  box-shadow: 0 2px rgba(39, 39, 39, 0.26);
+}
+
+
+
+
+
+/* モーダルウィンドウ(削除) */
+.modal-contents-member-delete .msg {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+.modal-contents-member-delete ul {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+.modal-contents-member-delete ul li:not(:first-of-type) {
+  margin-left: 10px;
+}
+
+
+
+table.user tbody tr.dammy-row {
+  height: 30px;
+}
+table.user thead tr th.index-column {
+  width: 100px;
+  text-align: center;
+}
+table.user td:first-of-type {
+  text-align: center;
+}
+table.user thead tr th.number-column, table.user thead tr th.name-column  {
+  width: 200px;
+}

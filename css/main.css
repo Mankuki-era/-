@@ -1,0 +1,21 @@
+
+.main-contena .form-contena.main {
+  align-items: center;
+  justify-content: flex-start;
+}
+.main-contena .form-contena.main .status-text {
+  font-size: 12px;
+}
+.main-contena .form-contena.main .status-text span {
+  color: #007bff;
+}
+.main-contena table.main thead tr th.number-column {
+  width: 200px;
+  text-align: center;
+}
+.main-contena table.main td:first-of-type {
+  text-align: center;
+}
+.main-contena table.main thead tr th.name-column  {
+  width: 200px;
+}
