@@ -32,21 +32,23 @@
               <th v-if="fields.grade !== '1EC'">班</th>
             </tr>
           </thead>
-          <tbody v-if="fields.selectMode == '1'">
-            <tr v-for="(user, index) in users.mode1.back" v-bind:key="user.id">
-              <td>{{ index + 1 }}</td>
-              <td>{{ user.number }}</td>
-              <td>{{ user.name }}</td>
-              <td>{{ user.team }}</td>
-            </tr>
-            <tr class="dammy-row"><td></td><td></td><td></td></tr>
+          <!-- 学籍番号順 -->
+          <tbody v-if="fields.selectMode == '1'"> 
             <tr v-for="(user, index) in users.mode1.front" v-bind:key="user.id">
               <td>{{ index + 1 }}</td>
               <td>{{ user.number }}</td>
               <td>{{ user.name }}</td>
               <td>{{ user.team }}</td>
             </tr>
+            <tr class="dammy-row"><td></td><td></td><td></td></tr>
+            <tr v-for="(user, index) in users.mode1.back" v-bind:key="user.id">
+              <td>{{ index + 1 }}</td>
+              <td>{{ user.number }}</td>
+              <td>{{ user.name }}</td>
+              <td>{{ user.team }}</td>
+            </tr>
           </tbody>
+          <!-- 班順 -->
           <tbody v-else>
             <tr v-for="(user, index) in users.mode2" v-bind:key="user.id">
               <td>{{ index + 1 }}</td>
@@ -107,7 +109,7 @@ module.exports = {
       Object.assign(this.$data, this.$options.initData());
     },
     getData: function(){
-      axios.get("http://localhost:8888/dbc.php",{
+      axios.get("http://localhost:81/dbc.php",{
         params: {
           mode: this.fields.selectMode,
           grade: this.fields.grade
@@ -115,36 +117,58 @@ module.exports = {
       }).then((res) => {
         if(res.data.param.length > 0){
           if(this.fields.selectMode == '1'){
-            num_front = '';
-            num_front_index = 0;
-            res.data.param.forEach((val, index) => {
-              if(num_front !== val.number.substr(0, 2)){
-                num_front = val.number.substr(0, 2);
-                num_front_index = index;
-              }
-            });
-            this.users.mode1.front = res.data.param.slice(0, num_front_index);
-            this.users.mode1.back = res.data.param.slice(num_front_index);
+            this.users.mode1.front = this.sortData(res.data.param)[0]
+            this.users.mode1.back = this.sortData(res.data.param)[1]
           }else{
             this.users.mode2 = [];
             var array = res.data.param;
             array.forEach((val1, index1) => {
-              num_front = '';
-              num_front_index = 0;
-              val1.user.forEach((val2, index2) => {
-                if(num_front !== val2.number.substr(0, 2)){
-                  num_front = val2.number.substr(0, 2);
-                  num_front_index = index2;
-                }
-              });
-              // val1.user = val1.user.slice(num_front_index).concat(val1.user.slice(0, num_front_index));
-              this.users.mode2.push(...val1.user.slice(num_front_index).concat(val1.user.slice(0, num_front_index)));
+              this.users.mode2.push(...this.sortData(val1.user)[0].concat(this.sortData(val1.user)[1]));
+              // concatは配列の連結 array1.concat(array2)
             });
-            // this.users.mode2 = array;
           }
           this.fields.dataFlag = true;
         }
       });
+    },
+    sortData: function(data){
+      grade_type = this.fields.grade.substr(1,2) // 2NCならNCを取り出す
+      num_front = ''; // 学籍番号の上２桁
+      array = [] // [[16,0,1],[17,2,3],[18,4,32],[19,33,34]]
+      back_array = []
+      data.forEach((val, index) => {
+        if(grade_type !== val.number.substr(2,2)){ // 昼と夜が違う学生はback_arrayに先に入れる
+          back_array.push(val)
+          return
+        }
+        if(num_front !== val.number.substr(0, 2)){
+          num_front = val.number.substr(0, 2);
+          array.push([num_front, index, null])
+        }
+        array[array.length - 1][2] = index
+      });
+      // 最も人数の多い学年がどれかを決定する
+      main_index = 0 // 人数が最も多い学年のインデックス(今回は18生なので2となる)
+      max_amount = 0 
+      array.forEach((val, index) => {
+        if(val[2] - val[1] >= max_amount){
+          main_index = index
+          max_amount = val[2] - val[1]
+        }
+      });
+      // frontには最も人数の多い学年を昇順, backはそれ以外の学年を昇順
+      front_array =  data.slice(array[main_index][1], array[main_index][2] + 1);
+      back_array_temp = []
+      array.forEach((val, index) => {
+        if(index !== main_index){
+          back_array_temp.push(...data.slice(val[1], val[2] + 1))
+        }
+      });
+      back_array.unshift(...back_array_temp)
+      return [
+        front_array,
+        back_array
+      ]
     },
     changeMode: function(){
       sessionStorage.setItem('selectMode', this.fields.selectMode);
@@ -155,6 +179,9 @@ module.exports = {
     },
     dataFlagUpdate: function(){
       this.fields.dataFlag = false;
+      this.users.mode1.front = []
+      this.users.mode1.back = []
+      this.users.mode2 = []
     }
   }
 }
