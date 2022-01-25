@@ -16,10 +16,9 @@ module.exports = {
     return {
       linkArray: [
         {path: '/main', name: 'ホーム', flag: false, icon: '<i class="fas fa-home"></i>'},
-        {path: '/page1', name: '学生情報管理', flag: false, icon: '<i class="fas fa-users"></i>'},
-        {path: '/page2', name: 'スケジュール管理', flag: false, icon: '<i class="fas fa-calendar-alt"></i>'},
+        {path: '/user', name: '学生情報管理', flag: false, icon: '<i class="fas fa-users"></i>'},
+        {path: '/schedule', name: 'スケジュール管理', flag: false, icon: '<i class="fas fa-calendar-alt"></i>'},
         {path: '/page3', name: '出席管理', flag: false, icon: '<i class="fas fa-database"></i>'},
-        {path: '/page2', name: '基本設定', flag: false, icon: '<i class="fas fa-cog"></i>'},
         {path: '/', name: 'ログアウト', flag: false, icon: '<i class="fas fa-sign-out-alt"></i>'},
       ]
     }

@@ -73,7 +73,7 @@ module.exports = {
       Object.assign(this.$data, this.$options.initData());
     },
     getData: function(){
-      axios.get("http://localhost:8888/dbc2.php",{
+      axios.get("http://localhost:81/dbc2.php",{
         params: {
           grade: this.fields.grade
         }

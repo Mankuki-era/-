@@ -17,8 +17,8 @@ const router = new VueRouter({
         }
       },
       { 
-        path: '/page1',
-        component: httpVueLoader('../views/page1.vue'),
+        path: '/user',
+        component: httpVueLoader('../views/user.vue'),
         beforeEnter: (to, from, next) => {
           if(sessionStorage.getItem('grade')){
             next();
@@ -28,8 +28,8 @@ const router = new VueRouter({
         }
       },
       {
-        path: '/page2',
-        component: httpVueLoader('../views/page2.vue'),
+        path: '/schedule',
+        component: httpVueLoader('../views/schedule.vue'),
         beforeEnter: (to, from, next) => {
           if(sessionStorage.getItem('grade')){
             next();

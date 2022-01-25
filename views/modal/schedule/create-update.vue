@@ -64,6 +64,14 @@
                   </select>
                 </div>
               </div>
+              <div class="form-box">
+                <p>班構成</p>
+                <div class="select-contena">
+                  <select id="select" v-model="fields.themaAmount" @change="changeThemaAmount">
+                    <option v-for="(number, index) in numberArray" :key="index">{{ number }}</option>
+                  </select>
+                </div>
+              </div>
             </div>
             <div class="right-contena">
               <p>実験テーマ一覧</p>
@@ -193,7 +201,7 @@ module.exports = {
   },
   methods: {
     getData: function(){
-      axios.get("http://localhost:8888/dbc2.php",{
+      axios.get("http://localhost:81/dbc2.php",{
         params: {
           grade: this.grade
         }
@@ -346,7 +354,7 @@ module.exports = {
       }
     },
     createData: function(schedule_json){
-      axios.post("http://localhost:8888/dbc2.php",{
+      axios.post("http://localhost:81/dbc2.php",{
         func: 'create',
         grade: this.grade,
         schedule_json: schedule_json
@@ -355,7 +363,7 @@ module.exports = {
       });
     },
     updateData: function(schedule_json){
-      axios.post("http://localhost:8888/dbc2.php",{
+      axios.post("http://localhost:81/dbc2.php",{
         func: 'update',
         grade: this.grade,
         schedule_json: schedule_json

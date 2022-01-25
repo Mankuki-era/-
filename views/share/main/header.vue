@@ -14,7 +14,7 @@
             </ul>
           </li>
           <li class="link-button second small" :class="{disabled: !dataflag}"><a href="" @click.prevent.stop="openModal('delete')">データ削除</a></li>
-          <li class="link-button first small"><a href="" @click.prevent.stop="openModal('create')">データ追加</a></li>
+          <li class="link-button first small" :class="{disabled: dataflag}"><a href="" @click.prevent.stop="openModal('create')">データ追加</a></li>
         </ul>
         <ul class="button-box" v-else-if="linkname === 'スケジュール管理'">
           <li class="menu-first link-button second small change-width-small">
