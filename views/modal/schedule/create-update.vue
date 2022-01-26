@@ -102,7 +102,7 @@
         <input type="checkbox" id="menu_bar03" />
         <div class="third-contena">
           <div class="table-contena">
-            <table v-if="fields.secondStep.flag">
+            <table v-if="fields.secondStep.flag && grade !== '2NC'">
               <thead>
                 <tr>
                   <th></th>
@@ -113,9 +113,28 @@
                 <tr v-for="(date, index1) in dateArray" :key="index1">
                   <th>{{ date }}</th>
                   <td v-for="(thema, index2) in themaArray" :key="index2">
-                    <select v-model="tableArray[index1][index2]">
+                    <select v-model="tableArray01[index1][index2]">
                       <option></option>
                       <option :value="team" v-for="(team, index3) in teamArray" :key="index3">{{ team }}</option>
+                    </select>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <table v-if="fields.secondStep.flag && grade === '2NC'">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th class="thema-name" v-for="(team, index) in teamArray" :key="index">{{ team }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(date, index1) in dateArray" :key="index1">
+                  <th>{{ date }}</th>
+                  <td v-for="(team, index2) in teamArray" :key="index2">
+                    <select v-model="tableArray02[index1][index2]">
+                      <option></option>
+                      <option :value="thema" v-for="(thema, index3) in themaArray" :key="index3">{{ thema }}</option>
                     </select>
                   </td>
                 </tr>
@@ -192,7 +211,8 @@ module.exports = {
       numberArray: [...Array(20).keys()].map(i => ++i),
       alphaArray: [...'ABCDEFGHIJKLMNOP'],
       teamArray: [],
-      tableArray: [],
+      tableArray01: [],
+      tableArray02: [],
       dayModeArray: ['3'],
     }
   },
@@ -218,7 +238,10 @@ module.exports = {
           var data = JSON.parse(res.data.param[0].table_json);
           this.dateArray = data.date;
           this.themaArray = data.thema;
-          this.tableArray = data.table;
+          this.teamArray = data.team;
+          this.fields.alphaIndex = data.team.length - 1;
+          this.tableArray01 = data.table;
+          this.tableArray02 = []
           this.dayModeArray = data.daymode;
           this.fields.startDate = this.dateArray[0];
           this.fields.dateAmount = this.dateArray.length;
@@ -226,6 +249,32 @@ module.exports = {
           this.fields.firstStep.flag = true;
           this.fields.secondStep.flag = true;
           this.fields.thirdStep.flag = true;
+
+          console.log(this.dayModeArray)
+
+          if(this.grade === '2NC'){
+            for(var i = 0; i < this.dateArray.length; i++){
+              this.tableArray02.push([]);
+              for(var j = 0; j < this.teamArray.length; j++){
+                this.tableArray02[i].push('');
+              }
+            }
+            array = [] // [[0, 4, 1], ...] [[日付のインデックス, 班のインデックス, テーマのインデックス], ...]
+            this.tableArray01.forEach((val1, index1) => {
+              val1.forEach((val2, index2) => {
+                if(val2 !== ''){
+                  this.teamArray.forEach((val3, index3) => {
+                    if(val2 === val3){
+                      array.push([index1, index3, index2])
+                    }
+                  });
+                }
+              });
+            });
+            array.forEach(val => {
+              this.tableArray02[val[0]][val[1]] = this.themaArray[val[2]]
+            });
+          }
         }
       });
     },
@@ -253,12 +302,12 @@ module.exports = {
       if(amount >= 0){
         for(var i = 1; i <= amount; i++){
           this.dateArray.push('');
-          this.dayModeArray.push('3');
+          if(this.dayModeArray !== undefined) this.dayModeArray.push('3');
         };
       }else{
         for(var i = 1; i <= -amount; i++){
           this.dateArray.pop();
-          this.dayModeArray.pop();
+          if(this.dayModeArray !== undefined) this.dayModeArray.pop();
         };
       }
       this.fields.postDateAmount = this.fields.dateAmount;
@@ -292,7 +341,8 @@ module.exports = {
         document.getElementById('menu_bar02').checked = false;
         document.getElementById('menu_bar03').checked = false;
       }else if(number === 2){
-        this.tableArray = [];
+        this.tableArray01 = [];
+        this.tableArray02 = [];
         document.getElementById('menu_bar01').checked = false;
         document.getElementById('menu_bar02').checked = true;
         document.getElementById('menu_bar03').checked = false;
@@ -300,6 +350,7 @@ module.exports = {
     },
     nextStep: function(number){
       if(number === 2){
+        console.log(this.tableArray01)
         if(this.dateArray.includes('')){
           this.fields.firstStep.flag = false;
           this.fields.firstStep.err = '入力値がありません';
@@ -312,14 +363,19 @@ module.exports = {
           }
         }
       }else if(number === 3){
+        console.log(this.tableArray01)
         if(this.themaArray.includes('')){
           this.fields.secondStep.flag = false;
           this.fields.secondStep.err = '入力値がありません';
         }else{
           for(var i = 0; i < this.dateArray.length; i++){
-            this.tableArray.push([]);
+            this.tableArray02.push([]);
+            for(var j = 0; j < this.teamArray.length; j++){
+              this.tableArray02[i].push('');
+            }
+            this.tableArray01.push([]);
             for(var j = 0; j < this.themaArray.length; j++){
-              this.tableArray[i].push('');
+              this.tableArray01[i].push('');
             }
           }
           this.fields.secondStep.flag = true;
@@ -342,7 +398,12 @@ module.exports = {
         }
       }else{
         var flag = false;
-        this.tableArray.forEach(val => {
+        if(this.grade === '2NC'){
+          table_array = this.tableArray02
+        }else{
+          table_array = this.tableArray01
+        }
+        table_array.forEach(val => {
           var result = val.some( function(value) {
             return value !== '';
           });
@@ -351,10 +412,28 @@ module.exports = {
           }
         });
         if(flag){
+          if(this.grade === '2NC'){ // tableArray01の形を変更する
+            array = [] // [[0, 4, 1], ...] [[日付のインデックス, テーマのインデックス, 班のインデックス], ...]
+            this.tableArray02.forEach((val1, index1) => {
+              val1.forEach((val2, index2) => {
+                if(val2 !== ''){
+                  this.themaArray.forEach((val3, index3) => {
+                    if(val2 === val3){
+                      array.push([index1, index3, index2])
+                    }
+                  });
+                }
+              });
+            });
+            array.forEach(val => {
+              this.tableArray01[val[0]][val[1]] = this.teamArray[val[2]]
+            });
+          }
           var schedule_json = {
             date: this.dateArray, // tableの行数に対応
             thema: this.themaArray, // tableの列数に対応
-            table: this.tableArray // ['', 'A', 'B', '', '', 'D']のような形
+            team: this.teamArray, // tableの列数に対応するかも
+            table: this.tableArray01 // ['', 'A', 'B', '', '', 'D']のような形
           };
           if(func === 'create'){
             this.createData(schedule_json);

@@ -390,13 +390,19 @@
 
 
 
-
+main .main-contena.schedule {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+main .main-contena.schedule.Bgadd {
+  background-color: #eee;
+}
 
 
 
 .schedule-box {
   height: 100%;
-  background-color: #eee;
 }
 .schedule-box table {
   width: auto;
@@ -410,6 +416,11 @@
   text-orientation: upright;
   vertical-align: middle;
   padding: 10px 15px;
+}
+.schedule-box table thead th.team-name {
+  padding: 10px 15px;
+  vertical-align: middle;
+  min-width: 150px;
 }
 .schedule-box table tbody, .schedule-box table thead th {
   background-color: #fff;
@@ -427,5 +438,5 @@
 .schedule-box table tbody tr td {
   line-height: 40px;
   text-align: center;
-  padding: 0;
+  padding: 0 10px;
 }

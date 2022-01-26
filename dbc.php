@@ -18,7 +18,7 @@ if($mode == 'GET'){
 
   if($_GET['mode'] == '1'){
     $sql = "SELECT * FROM user WHERE grade = :grade ORDER BY number";
-
+    
     $stmt = $dbh->prepare($sql);
     $stmt->bindValue(':grade', $grade);
     $stmt->execute();
