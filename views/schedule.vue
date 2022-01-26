@@ -4,21 +4,23 @@
 
     <main-header-component :grade="fields.grade" :linkname="fields.linkName" :dataflag="fields.dataFlag" @open-modal="openModal"></main-header-component>
 
-    <div class="main-contena">
+    <div class="main-contena schedule" :class="{Bgadd: fields.dataFlag}">
       <div class="schedule-box" v-if="fields.dataFlag">
         <table>
           <thead>
             <tr>
               <th v-if="fields.grade === '1EC'">登校形態</th>
               <th>日付</th>
-              <th class="thema-name" v-for="(thema, index) in themaArray" :key="index">{{ thema }}</th>
+              <template v-if="fields.grade !== '2NC'"><th class="thema-name" v-for="(thema, index) in themaArray" :key="index">{{ thema }}</th></template>
+              <template v-if="fields.grade === '2NC'"><th class="team-name" v-for="(team, index) in teamArray" :key="index">{{ team }}</th></template>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(date, index1) in dateArray" :key="index1">
               <th v-if="fields.grade === '1EC'">{{ setDayMode(dayModeArray[index1]) }}</th>
               <th>{{ date }}</th>
-              <td v-for="(thema, index2) in themaArray" :key="index2">{{ tableArray[index1][index2] }}</td>
+              <template v-if="fields.grade !== '2NC'"><td v-for="(thema, index2) in themaArray" :key="index2">{{ tableArray01[index1][index2] }}</td></template>
+              <template v-if="fields.grade === '2NC'"><td v-for="(team, index2) in teamArray" :key="index2">{{ tableArray02[index1][index2] }}</td></template>
             </tr>
           </tbody>
         </table>
@@ -52,8 +54,9 @@ module.exports = {
       },
       dateArray: [],
       themaArray: [''],
-      teamArray: [...'ABCDEFGHIJKLMN'],
-      tableArray: [],
+      teamArray: [],
+      tableArray01: [],
+      tableArray02: [],
       dayModeArray: []
     }
   },
@@ -82,9 +85,35 @@ module.exports = {
           var data = JSON.parse(res.data.param[0].table_json);
           this.dateArray = data.date;
           this.themaArray = data.thema;
-          this.tableArray = data.table;
+          this.teamArray = data.team;
+          this.tableArray01 = data.table;
           this.dayModeArray = data.daymode;
           this.fields.dataFlag = true;
+          
+          if(this.fields.grade === '2NC'){
+            console.log(data)
+            for(var i = 0; i < this.dateArray.length; i++){
+              this.tableArray02.push([]);
+              for(var j = 0; j < this.teamArray.length; j++){
+                this.tableArray02[i].push('');
+              }
+            }
+            array = [] // [[0, 4, 1], ...] [[日付のインデックス, 班のインデックス, テーマのインデックス], ...]
+            this.tableArray01.forEach((val1, index1) => {
+              val1.forEach((val2, index2) => {
+                if(val2 !== ''){
+                  this.teamArray.forEach((val3, index3) => {
+                    if(val2 === val3){
+                      array.push([index1, index3, index2])
+                    }
+                  });
+                }
+              });
+            });
+            array.forEach(val => {
+              this.tableArray02[val[0]][val[1]] = this.themaArray[val[2]]
+            });
+          }
         }
       });
     },
