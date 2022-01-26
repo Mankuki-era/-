@@ -168,7 +168,7 @@ module.exports = {
     },
     getUserData: function(){
       if(this.fields.grade === '1EC'){
-        axios.get("http://localhost:81/dbc.php",{
+        axios.get(`http://localhost:${port}/dbc.php`,{
           params: {
             mode: '1',
             grade: this.fields.grade
@@ -180,7 +180,7 @@ module.exports = {
           }
         });
       }else{
-        axios.get("http://localhost:81/dbc.php",{
+        axios.get(`http://localhost:${port}/dbc.php`,{
           params: {
             mode: '2',
             grade: this.fields.grade
@@ -212,7 +212,7 @@ module.exports = {
       }
     },
     getScheduleData: function(){
-      axios.get("http://localhost:81/dbc2.php",{
+      axios.get(`http://localhost:${port}/dbc2.php`,{
         params: {
           grade: this.fields.grade
         }
@@ -228,7 +228,7 @@ module.exports = {
       });
     },
     getLogData: function(){
-      axios.get("http://localhost:81/dbc4.php").then((res) => {
+      axios.get(`http://localhost:${port}/dbc4.php`).then((res) => {
         if(res.data.param.length > 0){
           this.logs = res.data.param;
 
@@ -346,7 +346,7 @@ module.exports = {
             });
             promise01.then(() => {
               // 欠席者リストの設定
-              axios.get("http://localhost:81/dbc5.php").then((res) => {
+              axios.get(`http://localhost:${port}/dbc5.php`).then((res) => {
 
                 var sublog = res.data.param;
 
@@ -450,7 +450,7 @@ module.exports = {
               const promise04 = new Promise((resolve04, reject) => {
                 if(createData.length > 0){
                   console.log(createData);
-                  axios.post("http://localhost:81/dbc5.php",{
+                  axios.post(`http://localhost:${port}/dbc5.php`,{
                     func: 'create',
                     data: createData
                   }).then((res) => {
@@ -463,7 +463,7 @@ module.exports = {
               });
               promise04.then(() => {
                 if(updateData.length > 0){
-                  axios.post("http://localhost:81/dbc5.php",{
+                  axios.post(`http://localhost:${port}/dbc5.php`,{
                     func: 'update',
                     data: updateData
                   }).then((res) => {
