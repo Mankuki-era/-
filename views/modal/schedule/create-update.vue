@@ -64,12 +64,18 @@
                   </select>
                 </div>
               </div>
-              <div class="form-box">
+              <div class="form-box team">
                 <p>班構成</p>
-                <div class="select-contena">
-                  <select id="select" v-model="fields.themaAmount" @change="changeThemaAmount">
-                    <option v-for="(number, index) in numberArray" :key="index">{{ number }}</option>
-                  </select>
+                <div class="team-select-box">
+                  <p>
+                    <span class="a">A</span>
+                    <span class="c">〜</span>
+                  </p>
+                  <div class="select-contena">
+                    <select v-model="fields.alphaIndex"  @change="changeTeam">
+                      <option v-for="(team, index) in alphaArray" :key="index" :value="index">{{ team }}</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
@@ -175,6 +181,7 @@ module.exports = {
         dateAmount: '1',
         postDateAmount: 1,
         themaAmount: 1,
+        alphaIndex: 0,
         postThemaAmount: 1,
         firstStep: {flag: false, err: ''},
         secondStep: {flag: false, err: ''},
@@ -183,9 +190,10 @@ module.exports = {
       dateArray: [],
       themaArray: [''],
       numberArray: [...Array(20).keys()].map(i => ++i),
-      teamArray: [...'ABCDEFGHIJKLMN'],
+      alphaArray: [...'ABCDEFGHIJKLMNOP'],
+      teamArray: [],
       tableArray: [],
-      dayModeArray: ['3'],   // 
+      dayModeArray: ['3'],
     }
   },
   data: function() {
@@ -201,7 +209,7 @@ module.exports = {
   },
   methods: {
     getData: function(){
-      axios.get("http://localhost:81/dbc2.php",{
+      axios.get(`http://localhost:${port}/dbc2.php`,{
         params: {
           grade: this.grade
         }
@@ -275,6 +283,9 @@ module.exports = {
       }
       this.fields.postThemaAmount = this.fields.themaAmount;
     },
+    changeTeam: function(){
+      this.teamArray = this.alphaArray.slice(0, this.fields.alphaIndex + 1)
+    },
     backStep: function(number){
       if(number === 1){
         document.getElementById('menu_bar01').checked = true;
@@ -341,9 +352,9 @@ module.exports = {
         });
         if(flag){
           var schedule_json = {
-            date: this.dateArray,
-            thema: this.themaArray,
-            table: this.tableArray
+            date: this.dateArray, // tableの行数に対応
+            thema: this.themaArray, // tableの列数に対応
+            table: this.tableArray // ['', 'A', 'B', '', '', 'D']のような形
           };
           if(func === 'create'){
             this.createData(schedule_json);
@@ -354,7 +365,7 @@ module.exports = {
       }
     },
     createData: function(schedule_json){
-      axios.post("http://localhost:81/dbc2.php",{
+      axios.post(`http://localhost:${port}/dbc2.php`,{
         func: 'create',
         grade: this.grade,
         schedule_json: schedule_json
@@ -363,7 +374,7 @@ module.exports = {
       });
     },
     updateData: function(schedule_json){
-      axios.post("http://localhost:81/dbc2.php",{
+      axios.post(`http://localhost:${port}/dbc2.php`,{
         func: 'update',
         grade: this.grade,
         schedule_json: schedule_json

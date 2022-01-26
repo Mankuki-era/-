@@ -1,3 +1,4 @@
+// ルーター設定
 const router = new VueRouter({
   // mode:'history',
   routes: [
@@ -61,6 +62,9 @@ Vue.component('main-header-component', httpVueLoader('../views/share/main/header
 Vue.component('alert-component', httpVueLoader('../views/modal/alert.vue'));
 Vue.component('member-create-component', httpVueLoader('../views/modal/member/create.vue'));
 Vue.component('schedule-create-update-component', httpVueLoader('../views/modal/schedule/create-update.vue'));
+
+// ポート番号
+var port = 8888
 
 const app = new Vue({
   el: "#app",

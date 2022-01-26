@@ -96,6 +96,9 @@
 .modal-contents-schedule-create .menu .second-contena .form-contena .right-contena {
   flex: 1;
 }
+.modal-contents-schedule-create .menu .second-contena .form-contena .left-contena .form-box.team {
+  margin-top: 20px;
+}
 .modal-contents-schedule-create .menu .first-contena .form-contena .left-contena .form-box p,
 .modal-contents-schedule-create .menu .second-contena .form-contena .left-contena .form-box p {
   font-size: 12px;
@@ -138,6 +141,24 @@
   cursor: pointer;
   height: 36px;
   width: 27px;
+}
+.modal-contents-schedule-create .menu .second-contena .form-contena .left-contena .form-box .team-select-box {
+  display: flex;
+  padding-left: 13px;
+}
+.modal-contents-schedule-create .menu .second-contena .form-contena .left-contena .form-box .team-select-box p {
+  margin: 0;
+  line-height: 35px;
+}
+.modal-contents-schedule-create .menu .second-contena .form-contena .left-contena .form-box .team-select-box p span.a {
+  font-size: 13px;
+}
+.modal-contents-schedule-create .menu .second-contena .form-contena .left-contena .form-box .team-select-box p span.c {
+  margin-left: 7px;
+}
+.modal-contents-schedule-create .menu .second-contena .form-contena .left-contena .form-box .team-select-box p span.a {
+  margin: 0;
+  line-height: 35px;
 }
 .modal-contents-schedule-create .menu .first-contena .form-contena .left-contena .form-box .select-contena,
 .modal-contents-schedule-create .menu .second-contena .form-contena .left-contena .form-box .select-contena {

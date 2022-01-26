@@ -92,7 +92,7 @@ module.exports = {
       return String(year) + "-" + String(month) + "-" + String(day) + " " + String(hour) + ":" + String(minute) + ":" + String(second);
     },
     getData: function(){
-      axios.get("http://localhost:81/dbc3.php", {
+      axios.get(`http://localhost:${port}/dbc3.php`, {
         params: {
           time: this.fields.connectTime
         }
