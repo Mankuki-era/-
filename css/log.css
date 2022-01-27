@@ -1,7 +1,12 @@
 
-/* .data-box {
-  height: 100%;
-} */
+.data-box {
+  min-height: 440px;
+}
+.data-box .mode01-msg {
+  line-height: 440px;
+  text-align: center;
+  color: #999;
+}
 
 .form-contena.data {
 	display: flex;

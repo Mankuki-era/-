@@ -102,7 +102,7 @@
         <input type="checkbox" id="menu_bar03" />
         <div class="third-contena">
           <div class="table-contena">
-            <table v-if="fields.secondStep.flag && grade !== '2NC'">
+            <table v-if="fields.tableSwitchFlag && grade !== '2NC'">
               <thead>
                 <tr>
                   <th></th>
@@ -121,7 +121,7 @@
                 </tr>
               </tbody>
             </table>
-            <table v-if="fields.secondStep.flag && grade === '2NC'">
+            <table v-if="fields.tableSwitchFlag && grade === '2NC'">
               <thead>
                 <tr>
                   <th></th>
@@ -198,10 +198,11 @@ module.exports = {
       fields: {
         startDate: '',
         dateAmount: '1',
-        postDateAmount: 1,
         themaAmount: 1,
-        alphaIndex: 0,
+        postDateAmount: 1,
         postThemaAmount: 1,
+        alphaIndex: 0,
+        tableSwitchFlag: false,
         firstStep: {flag: false, err: ''},
         secondStep: {flag: false, err: ''},
         thirdStep: {flag: false, err: ''},
@@ -229,7 +230,7 @@ module.exports = {
   },
   methods: {
     getData: function(){
-      axios.get(`http://localhost:${port}/dbc2.php`,{
+      axios.get(`http://localhost:${port}/backend/dbc2.php`,{
         params: {
           grade: this.grade
         }
@@ -246,11 +247,11 @@ module.exports = {
           this.fields.startDate = this.dateArray[0];
           this.fields.dateAmount = this.dateArray.length;
           this.fields.themaAmount = this.themaArray.length;
+          this.fields.postDateAmount = this.dateArray.length;
+          this.fields.postThemaAmount = this.themaArray.length;
           this.fields.firstStep.flag = true;
           this.fields.secondStep.flag = true;
           this.fields.thirdStep.flag = true;
-
-          console.log(this.dayModeArray)
 
           if(this.grade === '2NC'){
             for(var i = 0; i < this.dateArray.length; i++){
@@ -298,7 +299,7 @@ module.exports = {
       };
     },
     changeDateAmount: function(){
-      var amount = this.fields.dateAmount - this.fields.postDateAmount;
+      var amount = Number(this.fields.dateAmount) - this.fields.postDateAmount;
       if(amount >= 0){
         for(var i = 1; i <= amount; i++){
           this.dateArray.push('');
@@ -310,7 +311,7 @@ module.exports = {
           if(this.dayModeArray !== undefined) this.dayModeArray.pop();
         };
       }
-      this.fields.postDateAmount = this.fields.dateAmount;
+      this.fields.postDateAmount = Number(this.fields.dateAmount);
     },
     autoCreateDate: function(index){
       var date = new Date(this.dateArray[index]);
@@ -343,6 +344,7 @@ module.exports = {
       }else if(number === 2){
         this.tableArray01 = [];
         this.tableArray02 = [];
+        this.fields.tableSwitchFlag = false;
         document.getElementById('menu_bar01').checked = false;
         document.getElementById('menu_bar02').checked = true;
         document.getElementById('menu_bar03').checked = false;
@@ -350,7 +352,6 @@ module.exports = {
     },
     nextStep: function(number){
       if(number === 2){
-        console.log(this.tableArray01)
         if(this.dateArray.includes('')){
           this.fields.firstStep.flag = false;
           this.fields.firstStep.err = '入力値がありません';
@@ -363,7 +364,6 @@ module.exports = {
           }
         }
       }else if(number === 3){
-        console.log(this.tableArray01)
         if(this.themaArray.includes('')){
           this.fields.secondStep.flag = false;
           this.fields.secondStep.err = '入力値がありません';
@@ -379,6 +379,7 @@ module.exports = {
             }
           }
           this.fields.secondStep.flag = true;
+          this.fields.tableSwitchFlag = true;
           document.getElementById('menu_bar01').checked = false;
           document.getElementById('menu_bar02').checked = false;
           document.getElementById('menu_bar03').checked = true;
@@ -444,7 +445,7 @@ module.exports = {
       }
     },
     createData: function(schedule_json){
-      axios.post(`http://localhost:${port}/dbc2.php`,{
+      axios.post(`http://localhost:${port}/backend/dbc2.php`,{
         func: 'create',
         grade: this.grade,
         schedule_json: schedule_json
@@ -453,7 +454,7 @@ module.exports = {
       });
     },
     updateData: function(schedule_json){
-      axios.post(`http://localhost:${port}/dbc2.php`,{
+      axios.post(`http://localhost:${port}/backend/dbc2.php`,{
         func: 'update',
         grade: this.grade,
         schedule_json: schedule_json

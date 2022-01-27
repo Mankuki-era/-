@@ -26,7 +26,7 @@ module.exports = {
       }
     },
     deleteMemberData: function(){
-      axios.post(`http://localhost:${port}/dbc.php`, {
+      axios.post(`http://localhost:${port}/backend/dbc1.php`, {
         func: 'delete',
         grade: this.grade
       }).then((res) => {
@@ -34,7 +34,7 @@ module.exports = {
       })
     },
     deleteScheduleData: function(){
-      axios.post(`http://localhost:${port}/dbc2.php`,{
+      axios.post(`http://localhost:${port}/backend/dbc2.php`,{
         func: 'delete',
         grade: this.grade
       }).then((res) => {
