@@ -40,8 +40,8 @@ const router = new VueRouter({
         }
       },
       {
-        path: '/page3',
-        component: httpVueLoader('../views/page3.vue'),
+        path: '/log',
+        component: httpVueLoader('../views/log.vue'),
         beforeEnter: (to, from, next) => {
           if(sessionStorage.getItem('grade')){
             next();

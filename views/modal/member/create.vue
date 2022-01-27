@@ -159,7 +159,7 @@ module.exports = {
       this.$emit('close-modal');
     },
     createData: function(){
-      axios.post(`http://localhost:${port}/dbc.php`,{
+      axios.post(`http://localhost:${port}/backend/dbc1.php`,{
         func: 'create',
         grade: this.grade,
         users: this.users.postData

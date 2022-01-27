@@ -109,7 +109,7 @@ module.exports = {
       Object.assign(this.$data, this.$options.initData());
     },
     getData: function(){
-      axios.get(`http://localhost:${port}/dbc.php`,{
+      axios.get(`http://localhost:${port}/backend/dbc1.php`,{
         params: {
           mode: this.fields.selectMode,
           grade: this.fields.grade

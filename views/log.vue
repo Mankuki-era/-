@@ -1,9 +1,5 @@
 <template>
   <main>
-    <!-- <modal-component ref="modalChild" @data-update="getData" @dataflag-update="dataFlagUpdate"></modal-component> -->
-
-    <main-header-component :grade="fields.grade" :linkname="fields.linkName" :dataflag="fields.dataFlag" @open-modal="openModal"></main-header-component>
-
     <div class="main-contena">
       <div class="form-contena data">
         <div class="left-contena">
@@ -40,8 +36,8 @@
           </div>
         </div>
       </div>
-      <div class="data-box" v-if="fields.dataFlag">
-        <table v-if="fields.selectMode === '1'" class="mode01">
+      <div class="data-box" v-if="fields.usableFlag">
+        <table v-if="fields.selectMode === '1' && dataList.length > 0" class="mode01">
           <thead>
             <tr>
               <th class="date-column">日付</th>
@@ -93,6 +89,7 @@
             </template>
           </tbody>
         </table>
+        <p class="mode01-msg" v-if="fields.selectMode === '1' && dataList.length === 0"><i class="fas fa-info-circle"></i> 欠席者はいません</p>
         <table v-if="fields.selectMode === '2'" class="mode02">
           <thead>
             <tr>
@@ -134,13 +131,14 @@ module.exports = {
       fields: {
         grade: '',
         linkName: '',
-        dataFlag: true,
-        selectMode: '1',
+        usableFlag: false,
+        dataFlag: false,
+        selectMode: '2',
         loadFlag: false,
       },
       dateArray: [],
-      users: [],
-      userData: [],
+      users: [], // [{team: 'A1', user: Array(4)}, ...]の形
+      userData: [], // [{}, {}, {}...]の形
       themaArray: [],
       tableArray: [],
       dayModeArray: [],
@@ -167,26 +165,14 @@ module.exports = {
       Object.assign(this.$data, this.$options.initData());
     },
     getUserData: function(){
-      if(this.fields.grade === '1EC'){
-        axios.get(`http://localhost:${port}/dbc.php`,{
-          params: {
-            mode: '1',
-            grade: this.fields.grade
-          }
-        }).then((res) => {
-          if(res.data.param.length > 0){
-            this.users = res.data.param;
-            this.getScheduleData();
-          }
-        });
-      }else{
-        axios.get(`http://localhost:${port}/dbc.php`,{
-          params: {
-            mode: '2',
-            grade: this.fields.grade
-          }
-        }).then((res) => {
-          if(res.data.param.length > 0){
+      axios.get(`http://localhost:${port}/backend/dbc1.php`,{
+        params: {
+          mode: (this.fields.grade === '1EC') ? '1' : '2',
+          grade: this.fields.grade
+        }
+      }).then((res) => {
+        if(res.data.param.length > 0){
+          if(this.fields.grade !== '1EC'){
             var count = 0;
             res.data.param.forEach((val1, index1) => {
               var num_front = '';
@@ -204,15 +190,16 @@ module.exports = {
                 count++;
               });
             });
-            this.users = res.data.param;
-
-            this.getScheduleData();
           }
-        });
-      }
+          // console.log(this.userData)
+          this.users = res.data.param;
+          // console.log(this.users)
+          this.getScheduleData();
+        }
+      });
     },
     getScheduleData: function(){
-      axios.get(`http://localhost:${port}/dbc2.php`,{
+      axios.get(`http://localhost:${port}/backend/dbc2.php`,{
         params: {
           grade: this.fields.grade
         }
@@ -223,167 +210,186 @@ module.exports = {
           this.themaArray = data.thema;
           this.tableArray = data.table;
           this.dayModeArray = data.daymode;
+          this.fields.usableFlag = true; // 機能を使えるFlag
           this.getLogData();
         }
       });
     },
     getLogData: function(){
-      axios.get(`http://localhost:${port}/dbc4.php`).then((res) => {
+      axios.get(`http://localhost:${port}/backend/dbc4.php`).then((res) => {
         if(res.data.param.length > 0){
           this.logs = res.data.param;
 
-          var start_date = this.setTime('17:50:00');
-          var stop_date = this.setTime('18:10:00');
+          var start_time = this.setTime('17:50:00');
+          var stop_time = this.setTime('18:10:00');
 
           if(this.fields.grade === '1EC'){
-            // 出席テーブルの初期化
-            this.users.forEach(val1 => {
-              var array = [];
-              this.dateArray.forEach((val2, index) => {
-                if(this.dayModeArray[index] === '1'){   // 0: 未入力, 1: 出席, 2: 欠席, 3: 遅刻, 4: 実験なし
-                  if(Number(val1.number.slice(-3)) % 2 === 1){
-                    array.push(0);
-                  }else{
-                    array.push(4);
-                  }
-                }else if(this.dayModeArray[index] === '2'){
-                  if(Number(val1.number.slice(-3)) % 2 === 0){
-                    array.push(0);
-                  }else{
-                    array.push(4);
-                  }
-                }else if(this.dayModeArray[index] === '3'){
-                  array.push(0);
-                }
-              });
-              this.dataTable.push(array);
-            });
-  
-            // 出席テーブルに設定
-            this.logs.forEach(val1 => {
-              this.users.forEach((val2, index2) => {
-                this.dateArray.forEach((val3, index3) => {
-                  if(val2.number === val1.number){
-                    if(val1.created_at.split(' ')[0] === val3){
-                      var create_date = this.setTime(val1.created_at.split(' ')[1]);
-                      if(this.dataTable[index2][index3] !== 4){   // 出席日であれば
-                        if (start_date <= create_date && create_date <= stop_date) {
-                          this.dataTable[index2][index3] = 1;  // 正常
-                        }else{
-                          this.dataTable[index2][index3] = 3;  // 遅刻
-                        }
-                      }
-                    }
-                  }
-                  if(this.dataTable[index2][index3] === 0){
-                    if(this.setDay(this.getCurrentDay()) > this.setDay(val3)){  // スケジュールの日付が現在より過去のとき
-                      this.dataTable[index2][index3] = 2;  // 欠席
-                    }
-                  }
-                });
-              });
-            });
-
+            this.initDataTable01();
+            this.setDataTable01(start_time, stop_time)
           }else{
-
-            // 出席テーブルの初期化
-            this.userData.forEach((val1, index1) => {
-              var array = [];
-              this.dateArray.forEach((val2, index2) => {
-                var flag = false;   // 実験実施するかのフラグ
-                this.tableArray[index2].forEach((val3, index3) => {
-                  if(!flag && val3 !== ''){
-                    flag = val1.team.includes(val3);
-                    if(flag){
-                      return;
-                    }
-                  }
-                });
-                if(flag){
-                  if(this.setDay(this.getCurrentDay()) > this.setDay(val2)){  // スケジュールの日付が現在より過去のとき
-                    array.push(2);
-                  }else{
-                    array.push(0);     // 0: 未入力, 1: 出席, 2: 欠席(連絡なし), 3: 欠席(連絡あり), 4: 遅刻, 5: 実験なし
-                  }
-                }else{
-                  array.push(5);
-                }
-              });
-              this.dataTable.push(array);
-            });
-
-            const promise01 = new Promise((resolve01, reject) => {
-              // 出席テーブルに設定(出席、遅刻)
-              this.logs.forEach((val1, index1) => {
-                this.userData.forEach((val2, index2) => {
-                  if(val1.number === val2.number){
-                    this.dateArray.forEach((val3, index3) => {
-                      const promise02 = new Promise((resolve02, reject) => {
-                        if(val1.created_at.split(' ')[0] === val3 && this.dataTable[index2][index3] !== 5){   // 出席日であれば
-                          var create_date = this.setTime(val1.created_at.split(' ')[1]);
-                          if (start_date <= create_date && create_date <= stop_date) {
-                            this.dataTable[index2][index3] = 1;  // 正常
-                            resolve02();
-                          }else{
-                            this.dataTable[index2][index3] = 4;  // 遅刻
-                            resolve02();
-                          }
-                        }else{
-                          resolve02();
-                        }
-                      });
-                      promise02.then(() => {
-                        if(index1 === this.logs.length - 1 && index2 === this.userData.length - 1 && index3 === this.dateArray.length - 1){
-                          resolve01();
-                        }
-                      });
-                    });
-                  }else{
-                    return;
-                  }
-                });
-              });
-            });
-            promise01.then(() => {
-              // 欠席者リストの設定
-              axios.get(`http://localhost:${port}/dbc5.php`).then((res) => {
-
-                var sublog = res.data.param;
-
-                this.dateArray.forEach((val1, index1) => {
-                  var array1 = [];
-                  var array2 = [];
-                  this.dataTable.forEach((val2, index2) => {
-                    if(val2[index1] === 2 || val2[index1] === 3){
-                      array1.date = val1;
-                      var user = Object.create(this.userData[index2]);
-                      if(sublog.length > 0){
-                        sublog.forEach((val3, index3) => {
-                          if(val3.number === this.userData[index2].number && val3.date === val1){
-                            array2.push({...Object.getPrototypeOf(user), ...this.createDataStruct01(val3), date: val1});
-                            sublog.splice(index3, 1);
-                            if(val3.check01 !== '0'){
-                              val2[index1] = 3;
-                            }
-                          }
-                        });
-                      }else{
-                        array2.push({...Object.getPrototypeOf(user), ...this.createDataStruct02(), date: val1});
-                      }
-                    }
-                  });
-                  if(array2.length > 0){
-                    array1.user = array2;
-                    this.dataList.push(array1);
-                  }
-                  if(index1 === this.dateArray.length - 1){
-                    this.fields.loadFlag = true;
-                  }
-                });
-              });
+            this.initDataTable02();
+            this.setDataTable02(start_time, stop_time).then(() => {
+              this.setDataList02();
             });
           }
+        }else{
+          if(this.fields.grade === '1EC'){
+            this.initDataTable01();
+          }else{
+            this.initDataTable02();
+          }
+          this.fields.loadFlag = true
         }
+      });
+    },
+    initDataTable01: function(){
+      // 出席テーブルの初期化(1EC)
+      this.users.forEach(val1 => {
+        var array = [];
+        this.dateArray.forEach((val2, index) => {
+          if(this.dayModeArray[index] === '1'){   // 0: 未入力, 1: 出席, 2: 欠席, 3: 遅刻, 4: 実験なし
+            if(Number(val1.number.slice(-3)) % 2 === 1){
+              array.push(0);
+            }else{
+              array.push(4);
+            }
+          }else if(this.dayModeArray[index] === '2'){
+            if(Number(val1.number.slice(-3)) % 2 === 0){
+              array.push(0);
+            }else{
+              array.push(4);
+            }
+          }else if(this.dayModeArray[index] === '3'){
+            array.push(0);
+          }
+        });
+        this.dataTable.push(array);
+      });
+    },
+    setDataTable01: function(start_time, stop_time){
+      // 出席テーブルに設定(1EC)
+      this.logs.forEach(val1 => {
+        this.users.forEach((val2, index2) => {
+          this.dateArray.forEach((val3, index3) => {
+            if(val2.number === val1.number){
+              if(val1.created_at.split(' ')[0] === val3){
+                var create_date = this.setTime(val1.created_at.split(' ')[1]);
+                if(this.dataTable[index2][index3] !== 4){   // 出席日であれば
+                  if (start_time <= create_date && create_date <= stop_time) {
+                    this.dataTable[index2][index3] = 1;  // 正常
+                  }else{
+                    this.dataTable[index2][index3] = 3;  // 遅刻
+                  }
+                }
+              }
+            }
+            if(this.dataTable[index2][index3] === 0){
+              if(this.setDay(this.getCurrentDay()) > this.setDay(val3)){  // スケジュールの日付が現在より過去のとき
+                this.dataTable[index2][index3] = 2;  // 欠席
+              }
+            }
+          });
+        });
+      });
+    },
+    initDataTable02: function(stop_time){
+      // 出席テーブルの初期化(1EC以外)
+      this.userData.forEach((val1, index1) => {
+        var array = [];
+        this.dateArray.forEach((val2, index2) => {
+          var flag = false;   // 実験実施するかのフラグ
+          this.tableArray[index2].forEach((val3, index3) => {
+            if(!flag && val3 !== ''){
+              flag = val1.team.includes(val3);
+              if(flag){
+                return;
+              }
+            }
+          });
+          if(flag){
+            if(this.setDay(this.getCurrentDay()) > this.setDay(val2) || (this.setDay(this.getCurrentDay()) === this.setDay(val2) && stop_time < new Date)){  // スケジュールの日付が現在より過去のとき または 当日で
+              array.push(2);
+            }else{
+              array.push(0);     // 0: 未入力, 1: 出席, 2: 欠席(連絡なし), 3: 欠席(連絡あり), 4: 遅刻, 5: 実験なし
+            }
+          }else{
+            array.push(5);
+          }
+        });
+        this.dataTable.push(array);
+      });
+      console.log(this.dataTable)
+    },
+    setDataTable02: function(start_time, stop_time){
+      // 出席テーブルに設定(出席、遅刻)(1EC以外)
+      return new Promise((resolve01, reject) => {
+        this.logs.forEach((val1, index1) => {
+          this.userData.forEach((val2, index2) => {
+            if(val1.number === val2.number){
+              this.dateArray.forEach((val3, index3) => {
+                const promise02 = new Promise((resolve02, reject) => {
+                  if(val1.created_at.split(' ')[0] === val3 && this.dataTable[index2][index3] !== 5){   // 出席日であれば
+                    var create_date = this.setTime(val1.created_at.split(' ')[1]); // setTimeで時間比較できる形に変換している
+                    if (start_time <= create_date && create_date <= stop_time) {
+                      this.dataTable[index2][index3] = 1;  // 正常
+                      resolve02();
+                    }else{
+                      this.dataTable[index2][index3] = 4;  // 遅刻
+                      resolve02();
+                    }
+                  }else{
+                    resolve02();
+                  }
+                });
+                promise02.then(() => {
+                  if(index1 === this.logs.length - 1 && index2 === this.userData.length - 1 && index3 === this.dateArray.length - 1){
+                    resolve01();
+                  }
+                });
+              });
+            }else{
+              return; // 必要か？？
+            }
+          });
+        });
+      });
+    },
+    setDataList02: function(){
+      // 欠席者リストの設定(1EC以外)
+      axios.get(`http://localhost:${port}/backend/dbc5.php`).then((res) => {
+
+        var sublog = res.data.param;
+
+        this.dateArray.forEach((val1, index1) => {
+          var array1 = [];
+          var array2 = [];
+          this.dataTable.forEach((val2, index2) => {
+            if(val2[index1] === 2 || val2[index1] === 3){
+              array1.date = val1;
+              var user = Object.create(this.userData[index2]);
+              if(sublog.length > 0){
+                sublog.forEach((val3, index3) => {
+                  if(val3.number === this.userData[index2].number && val3.date === val1){
+                    array2.push({...Object.getPrototypeOf(user), ...this.createDataStruct01(val3), date: val1});
+                    sublog.splice(index3, 1);
+                    if(val3.check01 !== '0'){
+                      val2[index1] = 3;
+                    }
+                  }
+                });
+              }else{
+                array2.push({...Object.getPrototypeOf(user), ...this.createDataStruct02(), date: val1});
+              }
+            }
+          });
+          if(array2.length > 0){
+            array1.user = array2;
+            this.dataList.push(array1);
+          }
+          if(index1 === this.dateArray.length - 1){
+            this.fields.loadFlag = true;
+          }
+        });
       });
     },
     createDataStruct01: function(val){
@@ -450,7 +456,7 @@ module.exports = {
               const promise04 = new Promise((resolve04, reject) => {
                 if(createData.length > 0){
                   console.log(createData);
-                  axios.post(`http://localhost:${port}/dbc5.php`,{
+                  axios.post(`http://localhost:${port}/backend/dbc5.php`,{
                     func: 'create',
                     data: createData
                   }).then((res) => {
@@ -463,7 +469,7 @@ module.exports = {
               });
               promise04.then(() => {
                 if(updateData.length > 0){
-                  axios.post(`http://localhost:${port}/dbc5.php`,{
+                  axios.post(`http://localhost:${port}/backend/dbc5.php`,{
                     func: 'update',
                     data: updateData
                   }).then((res) => {
@@ -495,6 +501,7 @@ module.exports = {
       return date;
     },
     setTime: function(time){
+      // 時間比較できる形にフォーマットを変える
       var date = new Date();
 
       var hour_minute_second = time.split(":");
@@ -535,9 +542,6 @@ module.exports = {
     lineHeightChange: function(number){
       return "line-height:" + 22 * number + "px;";
     },
-    dataFlagUpdate: function(){
-      this.fields.dataFlag = false;
-    }
   }
 }
 </script>
