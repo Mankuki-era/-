@@ -32,9 +32,9 @@ if($mode == 'GET'){
     $stmt->execute();
     $result1 = $stmt->fetchAll(PDO::FETCH_ASSOC);
     // error_log(print_r($result1,true),"3","/Users/mankuki_era/Documents/debug.log");
-
+    
+    $result = [];
     foreach($result1 as $key => $val){
-      
       $sql = "SELECT * FROM user WHERE team = :team ORDER BY number";
       $stmt = $dbh->prepare($sql);
       $stmt->bindValue(':team', $val['team']);
@@ -54,6 +54,7 @@ if($mode == 'GET'){
     'param' => $result,
     'message' => 'getアクセスしました。'
   ];
+  // error_log(print_r($results,true),"3","/Users/mankuki_era/Documents/debug.log");
   echo json_encode($results);
 
 }else if($mode == 'POST') {

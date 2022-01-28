@@ -134,7 +134,7 @@ module.exports = {
         usableFlag: false,
         dataFlag: false,
         selectMode: '2',
-        loadFlag: false,
+        loadFlag: false, // レンダリング用Flag
       },
       dateArray: [],
       users: [], // [{team: 'A1', user: Array(4)}, ...]の形
@@ -191,9 +191,7 @@ module.exports = {
               });
             });
           }
-          // console.log(this.userData)
           this.users = res.data.param;
-          // console.log(this.users)
           this.getScheduleData();
         }
       });
@@ -229,7 +227,7 @@ module.exports = {
           }else{
             this.initDataTable02();
             this.setDataTable02(start_time, stop_time).then(() => {
-              this.setDataList02();
+              this.getSublogData();
             });
           }
         }else{
@@ -237,8 +235,19 @@ module.exports = {
             this.initDataTable01();
           }else{
             this.initDataTable02();
+            this.getSublogData();
           }
-          this.fields.loadFlag = true
+        }
+      });
+    },
+    getSublogData: function(){
+      axios.get(`http://localhost:${port}/backend/dbc5.php`).then((res) => {
+        if(res.data.param.length > 0){
+          this.initDataList02();
+          this.setDataList02(res.data.param);
+        }else{
+          this.initDataList02();
+          this.fields.loadFlag = true;
         }
       });
     },
@@ -307,7 +316,7 @@ module.exports = {
             }
           });
           if(flag){
-            if(this.setDay(this.getCurrentDay()) > this.setDay(val2) || (this.setDay(this.getCurrentDay()) === this.setDay(val2) && stop_time < new Date)){  // スケジュールの日付が現在より過去のとき または 当日で
+            if(this.setDay(this.getCurrentDay()) > this.setDay(val2) || (this.getCurrentDay() === val2 && stop_time < new Date())){  // スケジュールの日付が現在より過去のとき または 当日で受付時間を過ぎている場合
               array.push(2);
             }else{
               array.push(0);     // 0: 未入力, 1: 出席, 2: 欠席(連絡なし), 3: 欠席(連絡あり), 4: 遅刻, 5: 実験なし
@@ -318,7 +327,6 @@ module.exports = {
         });
         this.dataTable.push(array);
       });
-      console.log(this.dataTable)
     },
     setDataTable02: function(start_time, stop_time){
       // 出席テーブルに設定(出席、遅刻)(1EC以外)
@@ -341,95 +349,91 @@ module.exports = {
                     resolve02();
                   }
                 });
-                promise02.then(() => {
+                promise02.then(() => { // 最終のとき
                   if(index1 === this.logs.length - 1 && index2 === this.userData.length - 1 && index3 === this.dateArray.length - 1){
                     resolve01();
                   }
                 });
               });
-            }else{
-              return; // 必要か？？
             }
           });
         });
       });
     },
-    setDataList02: function(){
+    initDataList02: function(){
+      // 欠席者リストの初期化
+      this.dateArray.forEach((val1, index1) => {
+        var array1 = [];
+        var array2 = [];
+        this.dataTable.forEach((val2, index2) => {
+          if(val2[index1] === 2){
+            array1.date = val1;
+            var user = Object.create(this.userData[index2]);
+            array2.push({...Object.getPrototypeOf(user), ...this.createDataStruct(null), date: val1});
+            // userData. [id, name, number, team, grade, index, created_at]
+          }
+        });
+        if(array2.length > 0){
+          array1.user = array2;
+          this.dataList.push(array1);
+        }
+      });
+    },
+    setDataList02: function(sublog){
       // 欠席者リストの設定(1EC以外)
-      axios.get(`http://localhost:${port}/backend/dbc5.php`).then((res) => {
-
-        var sublog = res.data.param;
-
-        this.dateArray.forEach((val1, index1) => {
-          var array1 = [];
-          var array2 = [];
-          this.dataTable.forEach((val2, index2) => {
-            if(val2[index1] === 2 || val2[index1] === 3){
-              array1.date = val1;
-              var user = Object.create(this.userData[index2]);
-              if(sublog.length > 0){
-                sublog.forEach((val3, index3) => {
-                  if(val3.number === this.userData[index2].number && val3.date === val1){
-                    array2.push({...Object.getPrototypeOf(user), ...this.createDataStruct01(val3), date: val1});
-                    sublog.splice(index3, 1);
-                    if(val3.check01 !== '0'){
-                      val2[index1] = 3;
-                    }
+      this.dataTable.forEach((val1, index1) => {
+        if(val1.indexOf(2) !== -1){ // 欠席がある学生の時のみ書き換えを行う
+          val1.forEach((val2, index2) => {
+            if(val2 === 2){
+              delIndex = null;
+              sublog.some((val3, index3) => {
+                if(val3.number === this.userData[index1].number && val3.date === this.dateArray[index2]){
+                  delIndex = index3;
+                  // 出欠席表の書き換え
+                  if(val3.check01 !== 0){ // 連絡がなし(0)以外, つまりメール(1)もしくは電話(2)なら連絡ありと判定
+                    val1[index2] = 3; // val2 = 3だと反映されない
                   }
-                });
-              }else{
-                array2.push({...Object.getPrototypeOf(user), ...this.createDataStruct02(), date: val1});
+                  // 欠席者リストの書き換え
+                  this.dataList.forEach((val4, index4) => { 
+                    if(val4.date === val3.date){
+                      val4.user.forEach((val5, index5) => {
+                        if(val5.number === val3.number){
+                          val4.user[index5] = {...this.userData[index1], ...this.createDataStruct(val3), date: val3.date}
+                        }
+                      });
+                    }
+                  });
+                  return true; // sublogのループから抜ける (処理の軽量化)
+                };
+              });
+              if(delIndex !== null){
+                sublog.splice(delIndex, 1); // 確認したsublogを削除(処理の軽量化)
               }
             }
           });
-          if(array2.length > 0){
-            array1.user = array2;
-            this.dataList.push(array1);
-          }
-          if(index1 === this.dateArray.length - 1){
-            this.fields.loadFlag = true;
-          }
-        });
+        }
       });
+      this.fields.loadFlag = true;
     },
-    createDataStruct01: function(val){
+    createDataStruct: function(val){
+      // 欠席者リスト用の変数を作成
       return {
-        lateRemarks: val.remarks,
-        newRemarks: val.remarks,
-        lateCheck01: val.check01,
-        newCheck01: val.check01,
-        lateCheck02: val.check02,
-        newCheck02: val.check02,
-        lateCheck03: val.check03,
-        newCheck03: val.check03,
-        lateCheck04: val.check04,
-        newCheck04: val.check04,
-        lateDate01: val.date01,
-        newDate01: val.date01,
-        lateDate02: val.date02,
-        newDate02: val.date02,
-        lateCheck05: val.check05,
-        newCheck05: val.check05,
-      }
-    },
-    createDataStruct02: function(){
-      return {
-        lateRemarks: null,
-        newRemarks: null,
-        lateCheck01: '0',
-        newCheck01: '0',
-        lateCheck02: '0',
-        newCheck02: '0',
-        lateCheck03: '0',
-        newCheck03: '0',
-        lateCheck04: '0',
-        newCheck04: '0',
-        lateDate01: '',
-        newDate01: '',
-        lateDate02: '',
-        newDate02: '',
-        lateCheck05: '0',
-        newCheck05: '0',
+        lateRemarks: (val === null) ? null : val.remarks,
+        newRemarks: (val === null) ? null : val.remarks,
+        lateCheck01: (val === null) ? '0' : val.check01,
+        newCheck01: (val === null) ? '0' : val.check01,
+        lateCheck02: (val === null) ? '0' : val.check02,
+        newCheck02: (val === null) ? '0' : val.check02,
+        lateCheck03: (val === null) ? '0' : val.check03,
+        newCheck03: (val === null) ? '0' : val.check03,
+        lateCheck04: (val === null) ? '0' : val.check04,
+        newCheck04: (val === null) ? '0' : val.check04,
+        lateDate01: (val === null) ? '' : val.date01,
+        newDate01: (val === null) ? '' : val.date01,
+        lateDate02: (val === null) ? '' : val.date02,
+        newDate02: (val === null) ? '' : val.date02,
+        lateCheck05: (val === null) ? '0' : val.check05,
+        newCheck05: (val === null) ? '0' : val.check05,
       }
     },
     storeData: function(){
@@ -483,6 +487,7 @@ module.exports = {
       });
     },
     getCurrentDay: function(){
+      // 現在の日付を取得
       var date = new Date();
       var toDoubleDigits = function(num) {
         num += "";
