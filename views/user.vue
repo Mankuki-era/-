@@ -99,8 +99,8 @@ module.exports = {
   mounted: function(){
     this.fields.grade = sessionStorage.getItem('grade');
     this.fields.linkName = sessionStorage.getItem('linkName');
-    if(sessionStorage.getItem('selectMode')){
-      this.fields.selectMode = sessionStorage.getItem('selectMode');
+    if(sessionStorage.getItem('userSelectMode')){
+      this.fields.selectMode = sessionStorage.getItem('userSelectMode');
     }
     this.getData();
   },
@@ -171,7 +171,7 @@ module.exports = {
       ]
     },
     changeMode: function(){
-      sessionStorage.setItem('selectMode', this.fields.selectMode);
+      sessionStorage.setItem('userSelectMode', this.fields.selectMode);
       this.getData();
     },
     openModal: function(func){

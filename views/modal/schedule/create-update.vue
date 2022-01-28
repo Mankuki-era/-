@@ -238,20 +238,23 @@ module.exports = {
         if(res.data.param.length > 0){
           var data = JSON.parse(res.data.param[0].table_json);
           this.dateArray = data.date;
-          this.themaArray = data.thema;
-          this.teamArray = data.team;
-          this.fields.alphaIndex = data.team.length - 1;
-          this.tableArray01 = data.table;
-          this.tableArray02 = []
-          this.dayModeArray = data.daymode;
-          this.fields.startDate = this.dateArray[0];
-          this.fields.dateAmount = this.dateArray.length;
-          this.fields.themaAmount = this.themaArray.length;
-          this.fields.postDateAmount = this.dateArray.length;
-          this.fields.postThemaAmount = this.themaArray.length;
           this.fields.firstStep.flag = true;
           this.fields.secondStep.flag = true;
           this.fields.thirdStep.flag = true;
+          this.fields.startDate = this.dateArray[0];
+          this.fields.dateAmount = this.dateArray.length;
+          this.fields.postDateAmount = this.dateArray.length;
+          if(this.grade === '1EC'){
+            this.dayModeArray = data.daymode;
+          }else{
+            this.themaArray = data.thema;
+            this.teamArray = data.team;
+            this.fields.themaAmount = this.themaArray.length;
+            this.fields.postThemaAmount = this.themaArray.length;
+            this.fields.alphaIndex = data.team.length - 1;
+            this.tableArray01 = data.table;
+            this.tableArray02 = []
+          }
 
           if(this.grade === '2NC'){
             for(var i = 0; i < this.dateArray.length; i++){

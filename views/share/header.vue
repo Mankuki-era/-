@@ -1,5 +1,6 @@
 <template>
   <header>
+    <img src="img/logo.png" alt="">
     <div class="grade-box" v-if="fields.grade !== ''">{{ fields.grade }}</div>
   </header>
 </template>

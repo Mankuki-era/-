@@ -103,8 +103,11 @@ header {
   background-color: #324851;
   padding: 0 30px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
+}
+header img {
+  width: 170px;
 }
 header .grade-box {
   width: 35px;

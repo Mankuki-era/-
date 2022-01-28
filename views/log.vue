@@ -4,7 +4,7 @@
       <div class="form-contena data">
         <div class="left-contena">
           <div class="select-contena">
-            <select id="select" v-model="fields.selectMode" @change="changeSelectArea">
+            <select id="select" v-model="fields.selectMode" @change="changeMode">
               <option value="1">欠席者リスト</option>
               <option value="2">出欠席表</option>
             </select>
@@ -101,13 +101,22 @@
           </thead>
           <tbody>
             <template v-if="fields.loadFlag">
-              <template v-for="data in users">
-                <tr v-for="(user, index1) in data.user" :key="user.id">
-                  <td v-if="fields.grade !== '1EC' && index1 === 0" :rowspan="data.user.length" :style="lineHeightChange(data.user.length)">{{ data.team }}</td>
+              <template v-if="fields.grade === '1EC'">
+                <tr v-for="(user, index1) in userData" :key="user.id">
                   <td>{{ user.number }}</td>
                   <td>{{ user.name }}</td>
-                  <td v-for="(date, index2) in dateArray" :key="date" :class="{type1: dataTable[user.index][index2] === 1, type2: dataTable[user.index][index2] === 2, type3: dataTable[user.index][index2] === 3, type4: dataTable[user.index][index2] === 4, type5: dataTable[user.index][index2] === 5}"></td>
+                  <td v-for="(date, index2) in dateArray" :key="date" :class="{type1: dataTable[index1][index2] === 1, type2: dataTable[index1][index2] === 2, type3: dataTable[index1][index2] === 3, type4: dataTable[index1][index2] === 4, type5: dataTable[index1][index2] === 5}"></td>
                 </tr>
+              </template>
+              <template v-else>
+                <template v-for="data in users">
+                  <tr v-for="(user, index1) in data.user" :key="user.id">
+                    <td v-if="index1 === 0" :rowspan="data.user.length" :style="lineHeightChange(data.user.length)">{{ data.team }}</td>
+                    <td>{{ user.number }}</td>
+                    <td>{{ user.name }}</td>
+                    <td v-for="(date, index2) in dateArray" :key="date" :class="{type1: dataTable[user.index][index2] === 1, type2: dataTable[user.index][index2] === 2, type3: dataTable[user.index][index2] === 3, type4: dataTable[user.index][index2] === 4, type5: dataTable[user.index][index2] === 5}"></td>
+                  </tr>
+                </template>
               </template>
             </template>
           </tbody>
@@ -133,7 +142,7 @@ module.exports = {
         linkName: '',
         usableFlag: false,
         dataFlag: false,
-        selectMode: '2',
+        selectMode: '1',
         loadFlag: false, // レンダリング用Flag
       },
       dateArray: [],
@@ -153,7 +162,10 @@ module.exports = {
   mounted: function(){
     this.fields.grade = sessionStorage.getItem('grade');
     this.fields.linkName = sessionStorage.getItem('linkName');
-    this.$nextTick(function () {
+    if(sessionStorage.getItem('logSelectMode')){
+      this.fields.selectMode = sessionStorage.getItem('logSelectMode');
+    }
+    this.$nextTick(function () { // DOMの更新後に処理
       this.getUserData();
     });
   },
@@ -172,7 +184,9 @@ module.exports = {
         }
       }).then((res) => {
         if(res.data.param.length > 0){
-          if(this.fields.grade !== '1EC'){
+          if(this.fields.grade === '1EC'){
+            this.userData = res.data.param;
+          }else{
             var count = 0;
             res.data.param.forEach((val1, index1) => {
               var num_front = '';
@@ -190,8 +204,8 @@ module.exports = {
                 count++;
               });
             });
+            this.users = res.data.param;
           }
-          this.users = res.data.param;
           this.getScheduleData();
         }
       });
@@ -205,116 +219,73 @@ module.exports = {
         if(res.data.param.length > 0){
           var data = JSON.parse(res.data.param[0].table_json);
           this.dateArray = data.date;
-          this.themaArray = data.thema;
-          this.tableArray = data.table;
-          this.dayModeArray = data.daymode;
+          if(this.fields.grade === '1EC'){
+            this.dayModeArray = data.daymode;
+          }else{
+            this.themaArray = data.thema;
+            this.tableArray = data.table;
+          }
           this.fields.usableFlag = true; // 機能を使えるFlag
           this.getLogData();
         }
       });
     },
     getLogData: function(){
-      axios.get(`http://localhost:${port}/backend/dbc4.php`).then((res) => {
+      axios.get(`http://localhost:${port}/backend/dbc4.php`, {
+        params: {
+          grade: this.fields.grade
+        }
+      }).then((res) => {
+        var start_time = this.setTime('17:50:00');
+        var stop_time = this.setTime('18:10:00');
+        this.initDataTable(stop_time);
+
         if(res.data.param.length > 0){
           this.logs = res.data.param;
-
-          var start_time = this.setTime('17:50:00');
-          var stop_time = this.setTime('18:10:00');
-
-          if(this.fields.grade === '1EC'){
-            this.initDataTable01();
-            this.setDataTable01(start_time, stop_time)
-          }else{
-            this.initDataTable02();
-            this.setDataTable02(start_time, stop_time).then(() => {
-              this.getSublogData();
-            });
-          }
-        }else{
-          if(this.fields.grade === '1EC'){
-            this.initDataTable01();
-          }else{
-            this.initDataTable02();
+          this.setDataTable(start_time, stop_time).then(() => {
             this.getSublogData();
-          }
+          });
+        }else{
+          this.getSublogData();
         }
       });
     },
     getSublogData: function(){
-      axios.get(`http://localhost:${port}/backend/dbc5.php`).then((res) => {
+      axios.get(`http://localhost:${port}/backend/dbc5.php`, {
+        params: {
+          grade: this.fields.grade
+        }
+      }).then((res) => {
+        this.initDataList();
         if(res.data.param.length > 0){
-          this.initDataList02();
-          this.setDataList02(res.data.param);
+          this.setDataList(res.data.param);
         }else{
-          this.initDataList02();
           this.fields.loadFlag = true;
         }
       });
     },
-    initDataTable01: function(){
-      // 出席テーブルの初期化(1EC)
-      this.users.forEach(val1 => {
-        var array = [];
-        this.dateArray.forEach((val2, index) => {
-          if(this.dayModeArray[index] === '1'){   // 0: 未入力, 1: 出席, 2: 欠席, 3: 遅刻, 4: 実験なし
-            if(Number(val1.number.slice(-3)) % 2 === 1){
-              array.push(0);
-            }else{
-              array.push(4);
-            }
-          }else if(this.dayModeArray[index] === '2'){
-            if(Number(val1.number.slice(-3)) % 2 === 0){
-              array.push(0);
-            }else{
-              array.push(4);
-            }
-          }else if(this.dayModeArray[index] === '3'){
-            array.push(0);
-          }
-        });
-        this.dataTable.push(array);
-      });
-    },
-    setDataTable01: function(start_time, stop_time){
-      // 出席テーブルに設定(1EC)
-      this.logs.forEach(val1 => {
-        this.users.forEach((val2, index2) => {
-          this.dateArray.forEach((val3, index3) => {
-            if(val2.number === val1.number){
-              if(val1.created_at.split(' ')[0] === val3){
-                var create_date = this.setTime(val1.created_at.split(' ')[1]);
-                if(this.dataTable[index2][index3] !== 4){   // 出席日であれば
-                  if (start_time <= create_date && create_date <= stop_time) {
-                    this.dataTable[index2][index3] = 1;  // 正常
-                  }else{
-                    this.dataTable[index2][index3] = 3;  // 遅刻
-                  }
-                }
-              }
-            }
-            if(this.dataTable[index2][index3] === 0){
-              if(this.setDay(this.getCurrentDay()) > this.setDay(val3)){  // スケジュールの日付が現在より過去のとき
-                this.dataTable[index2][index3] = 2;  // 欠席
-              }
-            }
-          });
-        });
-      });
-    },
-    initDataTable02: function(stop_time){
-      // 出席テーブルの初期化(1EC以外)
+    initDataTable: function(stop_time){ 
+      // 出席テーブルの初期化
       this.userData.forEach((val1, index1) => {
         var array = [];
         this.dateArray.forEach((val2, index2) => {
-          var flag = false;   // 実験実施するかのフラグ
-          this.tableArray[index2].forEach((val3, index3) => {
-            if(!flag && val3 !== ''){
-              flag = val1.team.includes(val3);
-              if(flag){
-                return;
-              }
+          var flag = false; // 実験実施するかのフラグ
+          if(this.fields.grade === '1EC'){
+            if((this.dayModeArray[index2] === '1' && Number(val1.number.slice(-3)) % 2 === 1) || 
+               (this.dayModeArray[index2] === '2' && Number(val1.number.slice(-3)) % 2 === 0) ||
+               (this.dayModeArray[index2] === '3')){
+              flag = true
             }
-          });
+          }else{
+            this.tableArray[index2].forEach((val3, index3) => {
+              if(!flag && val3 !== ''){
+                flag = val1.team.includes(val3);
+                if(flag){
+                  return;
+                }
+              }
+            });
+          }
           if(flag){
             if(this.setDay(this.getCurrentDay()) > this.setDay(val2) || (this.getCurrentDay() === val2 && stop_time < new Date())){  // スケジュールの日付が現在より過去のとき または 当日で受付時間を過ぎている場合
               array.push(2);
@@ -322,14 +293,14 @@ module.exports = {
               array.push(0);     // 0: 未入力, 1: 出席, 2: 欠席(連絡なし), 3: 欠席(連絡あり), 4: 遅刻, 5: 実験なし
             }
           }else{
-            array.push(5);
+            array.push(5)
           }
         });
         this.dataTable.push(array);
       });
     },
-    setDataTable02: function(start_time, stop_time){
-      // 出席テーブルに設定(出席、遅刻)(1EC以外)
+    setDataTable: function(start_time, stop_time){
+      // 出席テーブルに設定(出席、遅刻)
       return new Promise((resolve01, reject) => {
         this.logs.forEach((val1, index1) => {
           this.userData.forEach((val2, index2) => {
@@ -350,7 +321,7 @@ module.exports = {
                   }
                 });
                 promise02.then(() => { // 最終のとき
-                  if(index1 === this.logs.length - 1 && index2 === this.userData.length - 1 && index3 === this.dateArray.length - 1){
+                  if(index1 === this.logs.length - 1 && index3 === this.dateArray.length - 1){
                     resolve01();
                   }
                 });
@@ -360,7 +331,7 @@ module.exports = {
         });
       });
     },
-    initDataList02: function(){
+    initDataList: function(){
       // 欠席者リストの初期化
       this.dateArray.forEach((val1, index1) => {
         var array1 = [];
@@ -379,8 +350,8 @@ module.exports = {
         }
       });
     },
-    setDataList02: function(sublog){
-      // 欠席者リストの設定(1EC以外)
+    setDataList: function(sublog){
+      // 欠席者リストの設定
       this.dataTable.forEach((val1, index1) => {
         if(val1.indexOf(2) !== -1){ // 欠席がある学生の時のみ書き換えを行う
           val1.forEach((val2, index2) => {
@@ -441,7 +412,7 @@ module.exports = {
       var updateData = [];
       this.dataList.forEach((val1, index1) => {
         val1.user.forEach((val2, index2) => {
-          const promise03 = new Promise((resolve03, reject) => {
+          new Promise((resolve03, reject) => {
             if(val2.lateRemarks !== val2.newRemarks || val2.lateCheck01 !== val2.newCheck01 || val2.lateCheck02 !== val2.newCheck02 || val2.lateCheck03 !== val2.newCheck03 || val2.lateCheck04 !== val2.newCheck04 || val2.lateDate01 !== val2.newDate01 || val2.lateDate02 !== val2.newDate02 || val2.lateCheck05 !== val2.newCheck05){
               var array = {...Object.getPrototypeOf(val2), ...val2, date: val1.date};
               if(val2.lateRemarks === null){ // 一つがnullならデータがまだない(作成処理)
@@ -454,10 +425,9 @@ module.exports = {
             }else{
               resolve03();
             }
-          });
-          promise03.then(() => {
+          }).then(() => {
             if(index1 === this.dataList.length - 1 && index2 === val1.user.length - 1){
-              const promise04 = new Promise((resolve04, reject) => {
+              new Promise((resolve04, reject) => {
                 if(createData.length > 0){
                   console.log(createData);
                   axios.post(`http://localhost:${port}/backend/dbc5.php`,{
@@ -470,8 +440,7 @@ module.exports = {
                 }else{
                   resolve04();
                 }
-              });
-              promise04.then(() => {
+              }).then(() => {
                 if(updateData.length > 0){
                   axios.post(`http://localhost:${port}/backend/dbc5.php`,{
                     func: 'update',
@@ -519,10 +488,9 @@ module.exports = {
 
       return date;  
     },
-    changeSelectArea: function(){
-      if(this.fields.selectMode === 2){
-        
-      }
+    changeMode: function(){
+      sessionStorage.setItem('logSelectMode', this.fields.selectMode);
+      // this.getUserData();
     },
     changeCheckArea: function(index1, index2, key){
       this.fields.loadFlag = false;  // 再レンダリングして監視させる

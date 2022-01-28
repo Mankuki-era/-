@@ -13,9 +13,12 @@ if($mode == 'GET'){
 
   $dbh = new PDO($dsn, $user, $pass);
 
-  $sql = "SELECT * FROM log";
+  $grade = $_GET['grade'];
+
+  $sql = "SELECT * FROM log WHERE grade = :grade";
 
   $stmt = $dbh->prepare($sql);
+  $stmt->bindValue(':grade', $grade);
   $stmt->execute();
 
   $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
