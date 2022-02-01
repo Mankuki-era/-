@@ -62,6 +62,7 @@ Vue.component('main-header-component', httpVueLoader('../views/share/main/header
 Vue.component('alert-component', httpVueLoader('../views/modal/alert.vue'));
 Vue.component('member-create-component', httpVueLoader('../views/modal/member/create.vue'));
 Vue.component('schedule-create-update-component', httpVueLoader('../views/modal/schedule/create-update.vue'));
+Vue.component('log-component', httpVueLoader('../views/modal/log/show.vue'));
 
 // ポート番号
 var port = 8888

@@ -1,17 +1,10 @@
 <?php
-
-ini_set( 'display_errors', 1 );
-ini_set( 'error_reporting', E_ALL );
+require_once('dbc.php');
 
 $mode = $_SERVER["REQUEST_METHOD"];
+$dbh = dbConnect();
 
 if($mode == 'GET'){
-
-  $dsn = 'mysql:host=localhost;dbname=attendance;charset=utf8';
-  $user = 'root';
-  $pass = 'root';
-
-  $dbh = new PDO($dsn, $user, $pass);
 
   $grade = $_GET['grade'];
 

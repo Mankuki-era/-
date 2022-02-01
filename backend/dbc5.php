@@ -1,17 +1,10 @@
 <?php
-
-// ini_set( 'display_errors', 1 );
-// ini_set( 'error_reporting', E_ALL );
+require_once('dbc.php');
 
 $mode = $_SERVER["REQUEST_METHOD"];
+$dbh = dbConnect();
 
 if($mode == 'GET'){
-
-  $dsn = 'mysql:host=localhost;dbname=attendance;charset=utf8';
-  $user = 'root';
-  $pass = 'root';
-
-  $dbh = new PDO($dsn, $user, $pass);
 
   $grade = $_GET['grade'];
 
@@ -34,12 +27,6 @@ if($mode == 'GET'){
 
 }else if($mode == 'POST') {
   
-  $dsn = 'mysql:host=localhost;dbname=attendance;charset=utf8';
-  $user = 'root';
-  $pass = 'root';
-  
-  $dbh = new PDO($dsn, $user, $pass);
-
   $request = json_decode(file_get_contents('php://input'));
   $func = $request->func;
 
@@ -79,7 +66,7 @@ if($mode == 'GET'){
     }
     $stmt->execute();
 
-    error_log(print_r($stmt->errorInfo(),true),"3","/Users/mankuki_era/Documents/debug.log");
+    // error_log(print_r($stmt->errorInfo(),true),"3","/Users/mankuki_era/Documents/debug.log");
 
   }elseif($func == 'update'){
   
@@ -95,7 +82,7 @@ if($mode == 'GET'){
     $sql.=implode(',', $arySql);
     $sql.=" WHERE number = :number AND date = :date";
 
-    error_log(print_r($sql,true),"3","/Users/mankuki_era/Documents/debug.log");
+    // error_log(print_r($sql,true),"3","/Users/mankuki_era/Documents/debug.log");
  
     $stmt = $dbh->prepare($sql);
     
@@ -105,7 +92,7 @@ if($mode == 'GET'){
         $array[":$key"] = $val;
       }
       $stmt->execute($array);
-      error_log(print_r($stmt->errorInfo(),true),"3","/Users/mankuki_era/Documents/debug.log");
+      // error_log(print_r($stmt->errorInfo(),true),"3","/Users/mankuki_era/Documents/debug.log");
     }
 
   }

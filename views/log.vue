@@ -1,5 +1,7 @@
 <template>
   <main>
+    <modal-component ref="modalChild" @data-update="getUserData" @dataflag-update="dataFlagUpdate"></modal-component>
+
     <div class="main-contena">
       <div class="form-contena data">
         <div class="left-contena">
@@ -37,33 +39,35 @@
         </div>
       </div>
       <div class="data-box" v-if="fields.usableFlag">
-        <table v-if="fields.selectMode === '1' && dataList.length > 0" class="mode01">
+        <table v-if="fields.selectMode === '1' && fields.loadFlag" class="mode01">
           <thead>
             <tr>
               <th class="date-column">日付</th>
-              <th class="team-column">班</th>
+              <th class="team-column" v-if="fields.grade !== '1EC'">班</th>
               <th class="number-column">学籍番号</th>
               <th class="name-column">氏名</th>
-              <th class="name-column">テーマ名</th>
+              <th class="name-column" v-if="fields.grade !== '1EC'">テーマ名</th>
               <th class="remarks-column">備考</th>
               <th class="remarks-column">欠席連絡</th>
+              <template  v-if="fields.grade !== '1EC'">
               <th class="remarks-column">補習・再実験日の伝達</th>
               <th class="remarks-column">伝達メールへの返信</th>
               <th class="remarks-column">補習・再実験の手続き</th>
               <th>届出日</th>
               <th>補習・再実験日</th>
               <th>出席</th>
+              </template>
             </tr>
           </thead>
           <tbody>
-            <template v-if="dataList.length > 0 && fields.loadFlag">
+            <template>
               <template v-for="(data, index1) in dataList">
                 <tr v-for="(user, index2) in data.user" :key="index2">
                   <td v-if="index2 === 0" :rowspan="data.user.length">{{ data.date.split('-')[1] }}月{{ data.date.split('-')[2] }}日</td>
-                  <td>{{ user.team }}</td>
+                  <td v-if="fields.grade !== '1EC'">{{ user.team }}</td>
                   <td>{{ user.number }}</td>
                   <td>{{ user.name }}</td>
-                  <td>増幅回路</td>
+                  <td v-if="fields.grade !== '1EC'">増幅回路</td>
                   <td class="input-area"><input type="text" v-model="user.newRemarks"></td>
                   <td class="select-area">
                     <select v-model="user.newCheck01">
@@ -72,6 +76,7 @@
                       <option value='2'>電話</option>
                     </select>
                   </td>
+                  <template  v-if="fields.grade !== '1EC'">
                   <td class="check-area" @click="changeCheckArea(index1, index2, 'newCheck02')">{{ setCircule(user.newCheck02) }}</td>
                   <td class="check-area" @click="changeCheckArea(index1, index2, 'newCheck03')">{{ setCircule(user.newCheck03) }}</td>
                   <td class="check-area" @click="changeCheckArea(index1, index2, 'newCheck04')">{{ setCircule(user.newCheck04) }}</td>
@@ -84,13 +89,14 @@
                     <input type="date" v-model="user.newDate02" @change="changeDateArea">
                   </td>
                   <td class="check-area" @click="changeCheckArea(index1, index2, 'newCheck05')">{{ setCircule(user.newCheck05) }}</td>
+                  </template>
                 </tr>
               </template>
             </template>
           </tbody>
         </table>
         <p class="mode01-msg" v-if="fields.selectMode === '1' && dataList.length === 0"><i class="fas fa-info-circle"></i> 欠席者はいません</p>
-        <table v-if="fields.selectMode === '2'" class="mode02">
+        <table v-if="fields.loadFlag && dataTable.length > 0 && fields.selectMode === '2'" class="mode02">
           <thead>
             <tr>
               <th v-if="fields.grade !== '1EC'"></th>
@@ -100,23 +106,21 @@
             </tr>
           </thead>
           <tbody>
-            <template v-if="fields.loadFlag">
-              <template v-if="fields.grade === '1EC'">
-                <tr v-for="(user, index1) in userData" :key="user.id">
+            <template v-if="fields.grade === '1EC'">
+              <tr v-for="(user, index1) in userData" :key="user.id">
+                <td>{{ user.number }}</td>
+                <td>{{ user.name }}</td>
+                <td v-for="(date, index2) in dateArray" :key="date" :class="{type1: dataTable[index1][index2] === 1, type2: dataTable[index1][index2] === 2, type3: dataTable[index1][index2] === 3, type4: dataTable[index1][index2] === 4, type5: dataTable[index1][index2] === 5, focus: dataTable[index1][index2] !== 0 && dataTable[index1][index2] !== 5}" @click.prevent.stop="clickTableCell(index1,index2)"></td>
+              </tr>
+            </template>
+            <template v-else>
+              <template v-for="data in users">
+                <tr v-for="(user, index1) in data.user" :key="user.id">
+                  <td v-if="index1 === 0" :rowspan="data.user.length" :style="lineHeightChange(data.user.length)">{{ data.team }}</td>
                   <td>{{ user.number }}</td>
                   <td>{{ user.name }}</td>
-                  <td v-for="(date, index2) in dateArray" :key="date" :class="{type1: dataTable[index1][index2] === 1, type2: dataTable[index1][index2] === 2, type3: dataTable[index1][index2] === 3, type4: dataTable[index1][index2] === 4, type5: dataTable[index1][index2] === 5}"></td>
+                  <td v-for="(date, index2) in dateArray" :key="date" :class="{type1: dataTable[user.index][index2] === 1, type2: dataTable[user.index][index2] === 2, type3: dataTable[user.index][index2] === 3, type4: dataTable[user.index][index2] === 4, type5: dataTable[user.index][index2] === 5}"></td>
                 </tr>
-              </template>
-              <template v-else>
-                <template v-for="data in users">
-                  <tr v-for="(user, index1) in data.user" :key="user.id">
-                    <td v-if="index1 === 0" :rowspan="data.user.length" :style="lineHeightChange(data.user.length)">{{ data.team }}</td>
-                    <td>{{ user.number }}</td>
-                    <td>{{ user.name }}</td>
-                    <td v-for="(date, index2) in dateArray" :key="date" :class="{type1: dataTable[user.index][index2] === 1, type2: dataTable[user.index][index2] === 2, type3: dataTable[user.index][index2] === 3, type4: dataTable[user.index][index2] === 4, type5: dataTable[user.index][index2] === 5}"></td>
-                  </tr>
-                </template>
               </template>
             </template>
           </tbody>
@@ -165,8 +169,9 @@ module.exports = {
     if(sessionStorage.getItem('logSelectMode')){
       this.fields.selectMode = sessionStorage.getItem('logSelectMode');
     }
-    this.$nextTick(function () { // DOMの更新後に処理
-      this.getUserData();
+    this.getUserData();
+    this.$nextTick(() => {
+      this.fields.loadFlag = true;
     });
   },
   methods: {
@@ -225,7 +230,7 @@ module.exports = {
             this.themaArray = data.thema;
             this.tableArray = data.table;
           }
-          this.fields.usableFlag = true; // 機能を使えるFlag
+          this.fields.usableFlag = true; // 機能を使えるFlag)
           this.getLogData();
         }
       });
@@ -385,6 +390,7 @@ module.exports = {
         }
       });
       this.fields.loadFlag = true;
+      // this.$emit('load-bar-event', false);
     },
     createDataStruct: function(val){
       // 欠席者リスト用の変数を作成
@@ -414,7 +420,7 @@ module.exports = {
         val1.user.forEach((val2, index2) => {
           new Promise((resolve03, reject) => {
             if(val2.lateRemarks !== val2.newRemarks || val2.lateCheck01 !== val2.newCheck01 || val2.lateCheck02 !== val2.newCheck02 || val2.lateCheck03 !== val2.newCheck03 || val2.lateCheck04 !== val2.newCheck04 || val2.lateDate01 !== val2.newDate01 || val2.lateDate02 !== val2.newDate02 || val2.lateCheck05 !== val2.newCheck05){
-              var array = {...Object.getPrototypeOf(val2), ...val2, date: val1.date};
+              var array = {...Object.getPrototypeOf(val2), ...val2, date: val1.date, grade: this.fields.grade};
               if(val2.lateRemarks === null){ // 一つがnullならデータがまだない(作成処理)
                 createData.push(array);
                 resolve03();
@@ -512,9 +518,17 @@ module.exports = {
         return '';
       }
     },
+    clickTableCell: function(index1, index2){
+      if(this.dataTable[index1][index2] !== 0 && this.dataTable[index1][index2] !== 5){
+        this.$refs.modalChild.openModal(this.fields.grade, this.fields.linkName, [this.userData[index1], this.dateArray[index2], this.dataTable[index1][index2]]);
+      }
+    },
     lineHeightChange: function(number){
       return "line-height:" + 22 * number + "px;";
     },
+    dataFlagUpdate: function(){
+      this.fields.loadFlag = true;
+    }
   }
 }
 </script>

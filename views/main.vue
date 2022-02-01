@@ -60,6 +60,7 @@ module.exports = {
     return this.$options.initData();
   },
   mounted: function(){
+    this.$emit('load-bar-event', true);
     this.fields.grade = sessionStorage.getItem('grade');
     this.fields.linkName = sessionStorage.getItem('linkName');
     if(sessionStorage.getItem('connectTime')){
@@ -68,6 +69,7 @@ module.exports = {
     if(sessionStorage.getItem('connectFlag')){
       this.fields.connectFlag = JSON.parse(sessionStorage.getItem('connectFlag').toLowerCase());
     }
+    this.$emit('load-bar-event', false);
     this.pollingAction();
   },
   methods: {

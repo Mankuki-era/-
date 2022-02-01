@@ -14,6 +14,7 @@
   <!-- Vue Loader -->
   <script src="https://unpkg.com/http-vue-loader"></script>
 
+  <!-- CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.css">
   <link rel="stylesheet" href="css/common.css">
   <link rel="stylesheet" href="css/home.css">
@@ -25,7 +26,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.1/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
+  <!-- FontAwesome -->
   <script src="https://kit.fontawesome.com/bf785f5925.js" crossorigin="anonymous"></script>
+
+  <!-- JQuery -->
   <script
   src="https://code.jquery.com/jquery-3.6.0.min.js"
   integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
@@ -40,8 +44,8 @@
       <loading-bar-component ref="loadBarChild"></loading-bar-component>
     </div>
     <div class="center-area">
-      <nav-component @load-bar-event="loadBarEvent"></nav-component>
-      <router-view @grade-show="gradeShow"></router-view>
+      <nav-component @load-bar-event="loadBarEvent" ref="navChild"></nav-component>
+      <router-view @grade-show="gradeShow" ref="routerViewChild"></router-view>
     </div>
   </div>
   <script src="./js/index.js"></script>

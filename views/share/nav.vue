@@ -55,12 +55,12 @@ module.exports = {
         this.$router.push({
           path: this.linkArray[index].path
         });
-        if(this.linkArray[index].name === 'ログアウト'){
-          sessionStorage.clear();
-          this.setLinkName();
-        }
         this.$emit('load-bar-event', false);
       }, 1000);
+      if(this.linkArray[index].name === 'ログアウト'){
+        sessionStorage.clear();
+        this.setLinkName();
+      }
     },
   }
 }

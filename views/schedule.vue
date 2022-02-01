@@ -64,6 +64,7 @@ module.exports = {
     return this.$options.initData();
   },
   mounted: function(){
+    this.$emit('load-bar-event', true);
     this.fields.grade = sessionStorage.getItem('grade');
     this.fields.linkName = sessionStorage.getItem('linkName');
     this.getData();
@@ -115,6 +116,7 @@ module.exports = {
             });
           }
         }
+        this.$emit('load-bar-event', false);
       });
     },
     setDayMode: function(number){

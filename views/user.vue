@@ -97,6 +97,7 @@ module.exports = {
     return this.$options.initData();
   },
   mounted: function(){
+    this.$emit('load-bar-event', true);
     this.fields.grade = sessionStorage.getItem('grade');
     this.fields.linkName = sessionStorage.getItem('linkName');
     if(sessionStorage.getItem('userSelectMode')){
@@ -129,6 +130,7 @@ module.exports = {
           }
           this.fields.dataFlag = true;
         }
+        this.$emit('load-bar-event', false);
       });
     },
     sortData: function(data){

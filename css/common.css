@@ -1,7 +1,10 @@
 /* 共通 */
 body {
   margin: 0;
-  font-family: "Helvetica Neue", "Helvetica", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Arial", "Yu Gothic", "Meiryo", sans-serif;
+  /* font-family: "Helvetica Neue", "Helvetica", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Arial", "Yu Gothic", "Meiryo", sans-serif; */
+  /* font-family: 'Arial Black',sans-serif; */
+  font-family: "Helvetica Neue",Arial,"Hiragino Kaku Gothic ProN","Hiragino Sans",Meiryo,sans-serif;
+  font-weight: 600;
 }
 div, p {
   user-select: none;
@@ -92,7 +95,7 @@ li.link-button.second.disabled a {
 }
 li.link-button.first a {
   color: #fff;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 
@@ -101,13 +104,13 @@ li.link-button.first a {
 header {
   height: 50px;
   background-color: #324851;
-  padding: 0 30px;
+  padding: 0 50px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 header img {
-  width: 170px;
+  width: 135px;
 }
 header .grade-box {
   width: 35px;
@@ -133,7 +136,7 @@ header .grade-box {
   height: 5px;
 }
 .bar-box .bar01, .bar-box .bar03 {
-  background-color:#007bff;
+  background-color:#198eee;
 }
 .bar-box .bar02, .bar-box .bar04 {
   background-color: #fff;
@@ -278,6 +281,7 @@ main .header-contena .header-box {
 main .header-contena .header-box h1 {
   font-size: 30px;
   line-height: 80px;
+  font-weight: 600;
   color: dimgray;
 }
 main .header-contena .header-box .button-contena {
@@ -364,7 +368,7 @@ main .main-contena .no-data p:last-of-type{
 .modal-mask {
   width: 100%;
   height: 100%;
-  background-color: #1e1e1ee6;
+  background-color: #1e1e1ea9;
 }
 .modal-contena {
   position: absolute;
@@ -375,6 +379,9 @@ main .main-contena .no-data p:last-of-type{
   max-width: 600px;
   padding: 10px 30px;
   background-color: #fff;
+}
+.modal-contena.vsmall {
+  width: 270px;
 }
 .modal-contena.small {
   width: 400px;

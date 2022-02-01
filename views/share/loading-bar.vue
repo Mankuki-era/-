@@ -11,7 +11,7 @@
 module.exports = {
   initData: function(){
     return {
-      animationFlag: false
+      animationFlag: false,
     }
   },
   data: function() {
